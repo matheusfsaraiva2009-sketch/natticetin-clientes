@@ -404,3 +404,62 @@
   width: 100%;
   justify-content: center;
 }
+
+/* ═══════════════════════════════════════════════
+   MELHORIAS MOBILE — Cart Drawer
+   ═══════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .cart-drawer {
+    max-width: 100%;
+  }
+
+  .cart-drawer__header {
+    padding: var(--space-4) var(--space-4);
+  }
+
+  .cart-drawer__title {
+    font-size: var(--text-xl);
+  }
+
+  .cart-drawer__body {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .cart-drawer__footer {
+    padding: var(--space-4) var(--space-4);
+  }
+
+  /* Imagem menor para aproveitar melhor o espaço */
+  .cart-item__image,
+  .cart-item__image-placeholder {
+    width: 60px;
+    height: 60px;
+  }
+
+  .cart-item {
+    gap: var(--space-3);
+  }
+
+  /* Botão de finalizar compra proeminente */
+  .cart-drawer__checkout-btn {
+    min-height: 52px;
+    font-size: var(--text-base);
+  }
+
+  /* Total bem legível */
+  .cart-drawer__total-value {
+    font-size: var(--text-xl);
+  }
+
+  /* Botões de quantidade maiores para toque */
+  .cart-item__qty-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .cart-item__qty {
+    font-size: var(--text-base);
+  }
+}
+

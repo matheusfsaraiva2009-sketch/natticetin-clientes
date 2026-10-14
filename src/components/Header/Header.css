@@ -283,3 +283,41 @@
   color: #25D366;
   font-weight: 500;
 }
+
+/* ═══════════════════════════════════════════════
+   MELHORIAS MOBILE — Header
+   ═══════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .header__inner {
+    height: var(--header-height);
+    padding: 0 var(--space-4);
+  }
+
+  .header__logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .header__brand-name {
+    font-size: var(--text-base);
+  }
+
+  /* Botão de carrinho com área de toque maior */
+  .header__cart-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Menu mobile com itens mais espaçados para toque fácil */
+  .header__mobile-link {
+    padding: var(--space-5) var(--space-5);
+    font-size: var(--text-lg);
+  }
+
+  .header__mobile-menu {
+    /* Sombra suave na parte inferior */
+    box-shadow: 0 8px 24px rgba(74,51,40,0.12);
+  }
+}
+

@@ -120,3 +120,42 @@
   color: rgba(242,233,220,0.4);
   font-style: italic;
 }
+
+/* ═══════════════════════════════════════════════
+   MELHORIAS MOBILE — Footer
+   ═══════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .footer {
+    padding: var(--space-10) 0 var(--space-6);
+  }
+
+  .footer__inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    padding-bottom: var(--space-6);
+    text-align: center;
+  }
+
+  .footer__brand {
+    align-items: center;
+  }
+
+  .footer__links ul,
+  .footer__contact ul {
+    align-items: center;
+  }
+
+  .footer__brand-name {
+    font-size: var(--text-xl);
+  }
+
+  .footer__bottom {
+    padding-top: var(--space-5);
+  }
+
+  .footer__copyright {
+    font-size: var(--text-xs);
+  }
+}
+

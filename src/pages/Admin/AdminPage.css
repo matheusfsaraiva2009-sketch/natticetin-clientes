@@ -665,3 +665,63 @@
   color: var(--color-espresso);
   margin: 0;
 }
+
+/* ═══════════════════════════════════════════════
+   MELHORIAS MOBILE — Admin
+   ═══════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  /* Conteúdo principal com padding adequado */
+  .admin-main {
+    padding: var(--space-4) !important;
+  }
+
+  /* Cabeçalho da seção empilhado em mobile */
+  .admin-section-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: var(--space-3);
+  }
+
+  .admin-section-header .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Inputs com fonte 16px para evitar zoom no iOS */
+  .admin-page .form-input,
+  .admin-page .form-select,
+  .admin-page .form-textarea {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  /* Tabela de produtos vira lista de cards em mobile */
+  .products-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Estatísticas em 2 colunas */
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--space-3) !important;
+  }
+
+  /* Formulário de produto com campos mais espaçados */
+  .product-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Botões de ação maiores */
+  .admin-page .btn {
+    min-height: 48px;
+  }
+
+  /* Sidebar mobile: itens de nav maiores para toque */
+  .admin-nav-item {
+    padding: var(--space-3) var(--space-3) !important;
+  }
+}
+

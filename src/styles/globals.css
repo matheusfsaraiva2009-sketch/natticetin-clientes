@@ -618,3 +618,89 @@ p {
 @media (min-width: 769px) {
   .show-mobile-only { display: none !important; }
 }
+
+/* ═══════════════════════════════════════════════
+   MELHORIAS RESPONSIVAS — MOBILE FIRST
+   ═══════════════════════════════════════════════ */
+
+/* Ajustes gerais de seção para mobile */
+@media (max-width: 640px) {
+  :root {
+    --header-height: 60px;
+  }
+
+  .section {
+    padding: var(--space-12) 0;
+  }
+
+  .section-sm {
+    padding: var(--space-8) 0;
+  }
+
+  /* Botões maiores para dedos em mobile */
+  .btn {
+    min-height: 48px;
+    font-size: var(--text-base);
+    padding: var(--space-3) var(--space-5);
+  }
+
+  .btn-lg {
+    min-height: 52px;
+    padding: var(--space-4) var(--space-6);
+  }
+
+  .btn-sm {
+    min-height: 40px;
+  }
+
+  /* Inputs maiores para toque */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    min-height: 48px;
+    font-size: 16px; /* previne zoom automático no iOS */
+    padding: var(--space-3) var(--space-4);
+  }
+
+  /* Modal ocupa quase a tela toda em mobile */
+  .modal-backdrop {
+    padding: var(--space-2);
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-height: 95vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: var(--space-4);
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Tipografia ligeiramente reduzida */
+  h1 { font-size: clamp(1.75rem, 8vw, 2.5rem); }
+  h2 { font-size: clamp(1.4rem, 6vw, 2rem); }
+  h3 { font-size: clamp(1.15rem, 5vw, 1.5rem); }
+}
+
+/* Toque mínimo de 44px em todos os elementos interativos */
+@media (max-width: 768px) {
+  button,
+  a,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

@@ -219,3 +219,54 @@
   margin: 0;
   text-align: center;
 }
+
+/* ═══════════════════════════════════════════════
+   MELHORIAS MOBILE — Product Card
+   ═══════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .product-card {
+    border-radius: 10px;
+  }
+
+  /* Imagem um pouco mais curta em mobile */
+  .product-card__image-wrap {
+    aspect-ratio: 4/5;
+  }
+
+  .product-card__body {
+    padding: 12px 12px 14px;
+    gap: 6px;
+  }
+
+  .product-card__name {
+    font-size: 1rem;
+  }
+
+  .product-card__price {
+    font-size: 1.2rem;
+  }
+
+  /* Botão maior para dedos */
+  .product-card__add-btn {
+    min-height: 48px;
+    font-size: 12px;
+    padding: 12px 10px;
+  }
+
+  .product-card__description {
+    -webkit-line-clamp: 2;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .product-card__body {
+    padding: 10px;
+  }
+
+  .product-card__name {
+    font-size: 0.9rem;
+  }
+}
+
