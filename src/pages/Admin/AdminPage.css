@@ -666,62 +666,283 @@
   margin: 0;
 }
 
+
 /* ═══════════════════════════════════════════════
-   MELHORIAS MOBILE — Admin
+   MELHORIAS MOBILE — Admin (completo)
    ═══════════════════════════════════════════════ */
 
-@media (max-width: 640px) {
-  /* Conteúdo principal com padding adequado */
+/* ── Sidebar em mobile: barra horizontal no topo ── */
+@media (max-width: 768px) {
+  .admin-page {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    flex-direction: row;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    overflow-x: auto;
+    gap: var(--space-2);
+    /* Oculta scrollbar horizontal mas mantém funcionalidade */
+    scrollbar-width: none;
+  }
+
+  .admin-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-sidebar__header {
+    flex-shrink: 0;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    border-bottom: none !important;
+    margin-right: var(--space-2);
+  }
+
+  /* Oculta texto do brand na sidebar horizontal */
+  .admin-sidebar__brand,
+  .admin-sidebar__role {
+    display: none;
+  }
+
+  .admin-sidebar__nav {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    gap: var(--space-1);
+    padding: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .admin-sidebar__nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Botões de nav: compactos e tocáveis */
+  .admin-nav-btn {
+    flex-shrink: 0;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    min-height: 40px;
+    gap: var(--space-2);
+    white-space: nowrap;
+  }
+
+  .admin-sidebar__footer {
+    flex-shrink: 0;
+    padding: 0 !important;
+    border-top: none !important;
+    margin-left: auto;
+  }
+
+  .admin-sidebar__user {
+    display: none;
+  }
+
+  /* Botão de sair: maior para toque */
+  .admin-sidebar__signout {
+    width: 40px;
+    height: 40px;
+  }
+
   .admin-main {
+    margin-left: 0 !important;
+    min-height: 0;
+  }
+}
+
+/* ── Conteúdo principal ── */
+@media (max-width: 640px) {
+  .admin-topbar {
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .admin-topbar__title {
+    font-size: var(--text-xl);
+  }
+
+  .admin-content {
     padding: var(--space-4) !important;
   }
 
-  /* Cabeçalho da seção empilhado em mobile */
-  .admin-section-header {
-    flex-direction: column;
-    align-items: flex-start !important;
-    gap: var(--space-3);
-  }
-
-  .admin-section-header .btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* Inputs com fonte 16px para evitar zoom no iOS */
-  .admin-page .form-input,
-  .admin-page .form-select,
-  .admin-page .form-textarea {
-    font-size: 16px;
-    min-height: 48px;
-  }
-
-  /* Tabela de produtos vira lista de cards em mobile */
-  .products-table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Estatísticas em 2 colunas */
+  /* Stats: 2 colunas em mobile pequeno */
   .admin-stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: var(--space-3) !important;
+    margin-bottom: var(--space-6);
   }
 
-  /* Formulário de produto com campos mais espaçados */
-  .product-form-grid {
-    grid-template-columns: 1fr !important;
+  .admin-stat-card {
+    padding: var(--space-4) var(--space-3);
   }
 
-  /* Botões de ação maiores */
+  .admin-stat-card__value {
+    font-size: var(--text-3xl);
+  }
+
+  /* Atalhos do dashboard em coluna */
+  .admin-shortcuts__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+
+  .admin-shortcut-btn {
+    padding: var(--space-5) var(--space-3);
+    font-size: var(--text-xs);
+    gap: var(--space-2);
+  }
+
+  /* ── Lista de produtos vira CARDS em mobile ── */
+  .admin-product-table {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    border: none;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .admin-product-row {
+    /* Em vez de linha, vira card 2 colunas */
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "img info"
+      "img actions";
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    align-items: start;
+  }
+
+  .admin-product-row__img-wrap {
+    grid-area: img;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-sm);
+    align-self: start;
+  }
+
+  .admin-product-row__info {
+    grid-area: info;
+    min-width: 0;
+  }
+
+  .admin-product-row__name {
+    font-size: var(--text-base);
+    white-space: normal;
+    word-break: break-word;
+    overflow: visible;
+  }
+
+  .admin-product-row__meta,
+  .admin-product-row__stock {
+    font-size: var(--text-xs);
+    margin-top: 2px;
+  }
+
+  /* Preço e badge ficam na linha de info */
+  .admin-product-row__price {
+    font-size: var(--text-base);
+    margin-top: var(--space-1);
+    display: block;
+  }
+
+  /* Botões de ação: ficam na área de ações */
+  .admin-product-row__actions {
+    grid-area: actions;
+    display: flex;
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+  }
+
+  .admin-product-row__actions .btn {
+    flex: 1;
+    justify-content: center;
+    min-height: 44px;
+    font-size: var(--text-xs);
+  }
+
+  /* Badge de status ao lado do nome */
+  .admin-product-row .badge {
+    margin-top: var(--space-1);
+    display: inline-flex;
+  }
+
+  /* Cabeçalho da lista de produtos */
+  .admin-products-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .admin-products-header .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+
+  /* Todos os inputs sem zoom no iOS */
+  .admin-page .form-input,
+  .admin-page .form-select,
+  .admin-page .form-textarea {
+    font-size: 16px !important;
+    min-height: 48px;
+  }
+
+  /* Botões do formulário maiores */
   .admin-page .btn {
     min-height: 48px;
   }
 
-  /* Sidebar mobile: itens de nav maiores para toque */
-  .admin-nav-item {
-    padding: var(--space-3) var(--space-3) !important;
+  /* Ações do formulário de produto empilhadas */
+  .product-form__actions {
+    flex-direction: column-reverse;
+  }
+
+  .product-form__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Estado vazio com menos padding */
+  .admin-empty {
+    padding: var(--space-12) var(--space-4);
   }
 }
+
+/* Muito pequeno (360px) */
+@media (max-width: 380px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .admin-shortcuts__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-product-row {
+    grid-template-columns: 56px 1fr;
+  }
+
+  .admin-product-row__img-wrap {
+    width: 56px;
+    height: 56px;
+  }
+}
+
 
