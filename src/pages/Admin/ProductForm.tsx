@@ -42,7 +42,7 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
       stock: product.stock,
       imageUrl: product.imageUrl,
       imageUrls: product.imageUrls,
-      active: product.active,
+      active: product.status === 'inactive' ? false : (product.status === 'out_of_stock' ? true : product.active),
       status: product.status,
       featured: product.featured,
     }
@@ -136,10 +136,15 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
 
     setIsSaving(true)
     try {
+      const dataToSave: ProductFormData = {
+        ...form,
+        active: form.status !== 'inactive',
+        stock: form.status === 'out_of_stock' ? 0 : form.stock,
+      }
       if (isEditing && product) {
-        await updateProduct(product.id, form)
+        await updateProduct(product.id, dataToSave)
       } else {
-        await createProduct(form)
+        await createProduct(dataToSave)
       }
       onSaved()
     } catch (err: unknown) {
@@ -261,7 +266,14 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
                 id="pf-stock"
                 type="number"
                 value={form.stock}
-                onChange={(e) => setField('stock', Math.max(0, parseInt(e.target.value) || 0))}
+                onChange={(e) => {
+                  const val = Math.max(0, parseInt(e.target.value) || 0)
+                  setField('stock', val)
+                  if (val > 0 && form.status === 'out_of_stock') {
+                    setField('status', 'active')
+                    setField('active', true)
+                  }
+                }}
                 className={`form-input ${errors.stock ? 'is-error' : ''}`}
                 min="0"
                 step="1"
@@ -373,7 +385,8 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
                 onChange={(e) => {
                   const s = e.target.value as ProductStatus
                   setField('status', s)
-                  setField('active', s === 'active')
+                  // Inativo = oculto; Esgotado = visível mas sem estoque (active=true)
+                  setField('active', s !== 'inactive')
                   if (s === 'out_of_stock') setField('stock', 0)
                 }}
                 className="form-select"

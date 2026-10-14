@@ -26,8 +26,8 @@ export function AdminPage() {
 
   // Stats
   const totalProducts = products.length
-  const activeProducts = products.filter((p) => p.active && p.stock > 0).length
-  const outOfStock = products.filter((p) => p.stock === 0 || p.status === 'out_of_stock').length
+  const activeProducts = products.filter((p) => p.active && p.stock > 0 && p.status !== 'inactive').length
+  const outOfStock = products.filter((p) => p.status !== 'inactive' && (p.stock === 0 || p.status === 'out_of_stock')).length
   const toucasCount = products.filter((p) => p.category === 'toucas').length
   const scrunchiesCount = products.filter((p) => p.category === 'scrunchies').length
 
@@ -73,8 +73,9 @@ export function AdminPage() {
   }
 
   const statusBadge = (p: Product) => {
-    if (!p.active || p.status === 'inactive') return <span className="badge badge-inactive">Inativo</span>
-    if (p.stock === 0 || p.status === 'out_of_stock') return <span className="badge badge-outofstock">Esgotado</span>
+    if (p.status === 'inactive') return <span className="badge badge-inactive">Inativo</span>
+    if (p.status === 'out_of_stock' || p.stock === 0) return <span className="badge badge-outofstock">Esgotado</span>
+    if (!p.active) return <span className="badge badge-inactive">Inativo</span>
     if (p.featured) return <span className="badge badge-featured">Destaque</span>
     return <span className="badge badge-active">Ativo</span>
   }
