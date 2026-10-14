@@ -55,16 +55,15 @@ export function subscribeToActiveProducts(
 ): Unsubscribe {
   const q = query(
     collection(db, PRODUCTS_COLLECTION),
-    where('active', '==', true),
-    orderBy('createdAt', 'desc')
+    where('active', '==', true)
   )
 
   return onSnapshot(
     q,
     (snapshot) => {
-      const products = snapshot.docs.map((doc) =>
-        docToProduct(doc.id, doc.data() as Record<string, unknown>)
-      )
+      const products = snapshot.docs
+        .map((doc) => docToProduct(doc.id, doc.data() as Record<string, unknown>))
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       callback(products)
     },
     (error) => {
@@ -85,16 +84,15 @@ export function subscribeToProductsByCategory(
   const q = query(
     collection(db, PRODUCTS_COLLECTION),
     where('active', '==', true),
-    where('category', '==', category),
-    orderBy('createdAt', 'desc')
+    where('category', '==', category)
   )
 
   return onSnapshot(
     q,
     (snapshot) => {
-      const products = snapshot.docs.map((doc) =>
-        docToProduct(doc.id, doc.data() as Record<string, unknown>)
-      )
+      const products = snapshot.docs
+        .map((doc) => docToProduct(doc.id, doc.data() as Record<string, unknown>))
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       callback(products)
     },
     (error) => {
