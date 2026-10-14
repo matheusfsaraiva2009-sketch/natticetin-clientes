@@ -66,7 +66,7 @@ export function LoginPage() {
       <div className="login-page__left" aria-hidden="true">
         <div className="login-page__left-content">
           <div className="login-page__brand-icon">V</div>
-          <h2 className="login-page__brand-title">Val Acessórios</h2>
+          <h2 className="login-page__brand-title">Nati Cetim</h2>
           <p className="login-page__brand-subtitle">Painel Administrativo</p>
           <div className="login-page__decorations">
             <div className="login-page__dec login-page__dec--1" />

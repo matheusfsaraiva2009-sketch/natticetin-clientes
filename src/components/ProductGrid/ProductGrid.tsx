@@ -96,7 +96,7 @@ export function ProductGrid({
   return (
     <section className="product-grid-section" id={id}>
       <div className="container">
-        {/* Header da seção */}
+        {/* Cabeçalho da seção */}
         <div className="product-grid__header">
           <div>
             <h2 className="product-grid__title">{title}</h2>
@@ -109,87 +109,133 @@ export function ProductGrid({
           )}
         </div>
 
-        {/* Filtros */}
-        {products.length > 0 && (
-          <div className="product-grid__filters" role="search" aria-label="Filtrar produtos">
-            <div className="product-grid__search-wrap">
-              <svg className="product-grid__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <input
-                type="search"
-                id={`search-${id}`}
-                placeholder="Pesquisar por nome ou cor..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="product-grid__search"
-                aria-label="Pesquisar produtos"
-              />
-            </div>
+        {/* Layout sidebar + grid */}
+        <div className="product-grid__layout">
 
-            <select
-              id={`color-filter-${id}`}
-              value={colorFilter}
-              onChange={(e) => setColorFilter(e.target.value)}
-              className="form-select product-grid__select"
-              aria-label="Filtrar por cor"
-            >
-              <option value="">Todas as cores</option>
-              {uniqueColors.map((color) => (
-                <option key={color} value={color}>{color}</option>
-              ))}
-            </select>
+          {/* ── Sidebar de filtros ── */}
+          {products.length > 0 && (
+            <aside className="product-grid__sidebar" aria-label="Filtros">
 
-            <select
-              id={`status-filter-${id}`}
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-              className="form-select product-grid__select"
-              aria-label="Filtrar por disponibilidade"
-            >
-              <option value="all">Todos</option>
-              <option value="available">Disponíveis</option>
-              <option value="out_of_stock">Esgotados</option>
-            </select>
+              {/* Filtro por Cor */}
+              <div className="product-grid__filter-group">
+                <div className="product-grid__filter-title">Filtrar por Cor</div>
+                <label className="product-grid__filter-option">
+                  <input
+                    type="radio"
+                    name={`color-${id}`}
+                    checked={colorFilter === ''}
+                    onChange={() => setColorFilter('')}
+                  />
+                  Todas as cores
+                </label>
+                {uniqueColors.map((color) => (
+                  <label
+                    key={color}
+                    className={`product-grid__filter-option ${colorFilter === color ? 'product-grid__filter-option--active' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name={`color-${id}`}
+                      checked={colorFilter === color}
+                      onChange={() => setColorFilter(color)}
+                    />
+                    {color}
+                  </label>
+                ))}
+              </div>
 
-            {hasFilters && (
-              <button onClick={clearFilters} className="btn btn-ghost btn-sm" id={`btn-clear-filters-${id}`}>
-                Limpar filtros
-              </button>
+              {/* Filtro por Disponibilidade */}
+              <div className="product-grid__filter-group">
+                <div className="product-grid__filter-title">Disponibilidade</div>
+                {([
+                  { value: 'all', label: 'Todos' },
+                  { value: 'available', label: 'Disponíveis' },
+                  { value: 'out_of_stock', label: 'Esgotados' },
+                ] as const).map(({ value, label }) => (
+                  <label
+                    key={value}
+                    className={`product-grid__filter-option ${statusFilter === value ? 'product-grid__filter-option--active' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name={`status-${id}`}
+                      checked={statusFilter === value}
+                      onChange={() => setStatusFilter(value)}
+                    />
+                    {label}
+                  </label>
+                ))}
+              </div>
+
+              {/* Limpar filtros */}
+              {hasFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="product-grid__clear-btn"
+                  id={`btn-clear-filters-${id}`}
+                >
+                  Limpar filtros
+                </button>
+              )}
+            </aside>
+          )}
+
+          {/* ── Área principal ── */}
+          <div className="product-grid__main">
+
+            {/* Barra de busca + ordenação */}
+            {products.length > 0 && (
+              <div className="product-grid__topbar" role="search" aria-label="Buscar produtos">
+                <div className="product-grid__search-wrap">
+                  <svg className="product-grid__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input
+                    type="search"
+                    id={`search-${id}`}
+                    placeholder="Buscar por nome ou cor..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="product-grid__search"
+                    aria-label="Pesquisar produtos"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Grid de produtos */}
+            {products.length === 0 ? (
+              <div className="product-grid__empty">
+                <div className="product-grid__empty-icon" aria-hidden="true">✨</div>
+                <h3>Em breve</h3>
+                <p>{emptyMessage}</p>
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="product-grid__empty">
+                <div className="product-grid__empty-icon" aria-hidden="true">🔍</div>
+                <h3>Nenhum produto encontrado</h3>
+                <p>Tente outros termos ou{' '}
+                  <button onClick={clearFilters} className="product-grid__clear-link">
+                    limpe os filtros
+                  </button>
+                </p>
+              </div>
+            ) : (
+              <div className="product-grid__grid" role="list" aria-label={`Lista de ${title}`}>
+                {filtered.map((product, index) => (
+                  <div
+                    key={product.id}
+                    role="listitem"
+                    style={{ animationDelay: `${index * 55}ms` }}
+                  >
+                    <ProductCard product={product} />
+                  </div>
+                ))}
+              </div>
             )}
           </div>
-        )}
 
-        {/* Grid de produtos */}
-        {products.length === 0 ? (
-          <div className="product-grid__empty">
-            <div className="product-grid__empty-icon" aria-hidden="true">✨</div>
-            <h3>Em breve</h3>
-            <p>{emptyMessage}</p>
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="product-grid__empty">
-            <div className="product-grid__empty-icon" aria-hidden="true">🔍</div>
-            <h3>Nenhum produto encontrado</h3>
-            <p>Tente outros termos ou{' '}
-              <button onClick={clearFilters} className="product-grid__clear-link">
-                limpe os filtros
-              </button>
-            </p>
-          </div>
-        ) : (
-          <div className="product-grid__grid" role="list" aria-label={`Lista de ${title}`}>
-            {filtered.map((product, index) => (
-              <div
-                key={product.id}
-                role="listitem"
-                style={{ animationDelay: `${index * 60}ms` }}
-              >
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </div>
-        )}
+        </div>
       </div>
     </section>
   )

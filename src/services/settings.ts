@@ -13,14 +13,14 @@ const SETTINGS_DOC = 'settings/store'
 
 // Configurações padrão (exibidas quando o documento ainda não existe)
 export const DEFAULT_SETTINGS: StoreSettings = {
-  brandName: 'Val Acessórios',
+  brandName: 'Nati Cetim',
   logoUrl: '',
   tagline: 'Elegância e delicadeza em cada detalhe',
   description: 'Toucas dupla face e scrunchies de cetim artesanais, feitos com carinho para você.',
   whatsappNumber: '',
   instagramHandle: '',
   instagramUrl: '',
-  footerText: '© 2025 Val Acessórios. Todos os direitos reservados.',
+  footerText: '© 2025 Nati Cetim. Todos os direitos reservados.',
   heroImageUrl: '',
   heroTitle: 'Cuide do seu cabelo com elegância',
   heroSubtitle: 'Toucas dupla face e scrunchies de cetim que protegem e embelezam.',
