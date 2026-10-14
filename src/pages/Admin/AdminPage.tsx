@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useAllProducts } from '../../hooks/useProducts'
 import { signOutUser } from '../../services/auth'
 import { deleteProduct } from '../../services/products'
-import { deleteProductImages } from '../../services/storage'
+
 import { formatCurrency } from '../../utils'
 import type { Product } from '../../types'
 import { ProductForm } from './ProductForm'
@@ -62,11 +62,6 @@ export function AdminPage() {
     setDeletingId(deleteConfirm.id)
 
     try {
-      // Exclui imagens do Storage antes do documento
-      const allUrls = [deleteConfirm.imageUrl, ...deleteConfirm.imageUrls].filter(Boolean)
-      if (allUrls.length > 0) {
-        await deleteProductImages(allUrls)
-      }
       await deleteProduct(deleteConfirm.id)
       showSuccess('Produto excluído.')
     } catch {
