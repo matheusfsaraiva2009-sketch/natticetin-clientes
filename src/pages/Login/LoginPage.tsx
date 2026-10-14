@@ -65,7 +65,7 @@ export function LoginPage() {
     <div className="login-page">
       <div className="login-page__left" aria-hidden="true">
         <div className="login-page__left-content">
-          <div className="login-page__brand-icon">V</div>
+          <img src="/logo-nati-cetim.svg" alt="Logo Nati Cetim" style={{ width: 120, height: 120, objectFit: 'contain' }} />
           <h2 className="login-page__brand-title">Nati Cetim</h2>
           <p className="login-page__brand-subtitle">Painel Administrativo</p>
           <div className="login-page__decorations">

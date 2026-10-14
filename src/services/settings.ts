@@ -20,7 +20,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   whatsappNumber: '',
   instagramHandle: '',
   instagramUrl: '',
-  footerText: '© 2025 Nati Cetim. Todos os direitos reservados.',
+  footerText: '© 2026 Nati Cetim. Todos os direitos reservados.',
   heroImageUrl: '',
   heroTitle: 'Cuide do seu cabelo com elegância',
   heroSubtitle: 'Toucas dupla face e scrunchies de cetim que protegem e embelezam.',

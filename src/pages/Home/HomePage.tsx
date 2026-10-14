@@ -66,22 +66,18 @@ export function HomePage() {
         <div className="container">
           <div className="features__grid">
             <div className="feature-item">
-              <div className="feature-item__icon" aria-hidden="true">🌙</div>
               <h3 className="feature-item__title">Proteção noturna</h3>
               <p className="feature-item__text">Toucas dupla face que protegem o cabelo enquanto você dorme</p>
             </div>
             <div className="feature-item">
-              <div className="feature-item__icon" aria-hidden="true">✨</div>
               <h3 className="feature-item__title">Cetim de qualidade</h3>
               <p className="feature-item__text">Tecido que reduz o frizz e mantém a hidratação dos fios</p>
             </div>
             <div className="feature-item">
-              <div className="feature-item__icon" aria-hidden="true">🎀</div>
               <h3 className="feature-item__title">Design elegante</h3>
               <p className="feature-item__text">Peças que combinam funcionalidade com estética refinada</p>
             </div>
             <div className="feature-item">
-              <div className="feature-item__icon" aria-hidden="true">💬</div>
               <h3 className="feature-item__title">Pedido pelo WhatsApp</h3>
               <p className="feature-item__text">Atendimento personalizado direto com a loja</p>
             </div>

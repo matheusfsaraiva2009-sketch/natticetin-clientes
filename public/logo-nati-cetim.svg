@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <!-- Círculo externo duplo -->
+  <circle cx="200" cy="200" r="188" stroke="#2d1a0e" stroke-width="2.5"/>
+  <circle cx="200" cy="200" r="178" stroke="#2d1a0e" stroke-width="1"/>
+
+  <!-- Máquina de costura vintage -->
+  <!-- Base da máquina -->
+  <ellipse cx="200" cy="175" rx="72" ry="8" fill="none" stroke="#2d1a0e" stroke-width="2"/>
+  <!-- Braço curvo esquerdo da base -->
+  <path d="M128 175 Q112 175 108 185" stroke="#2d1a0e" stroke-width="2" stroke-linecap="round"/>
+  <!-- Braço curvo direito da base -->
+  <path d="M272 175 Q288 175 292 185" stroke="#2d1a0e" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Corpo principal da máquina -->
+  <path d="M148 175 Q148 130 168 118 L232 118 Q252 130 252 175 Z" fill="#2d1a0e"/>
+  <path d="M152 175 Q152 134 170 122 L230 122 Q248 134 248 175 Z" fill="#f5f0eb"/>
+
+  <!-- Haste vertical (agulha) -->
+  <rect x="196" y="118" width="8" height="57" rx="2" fill="#2d1a0e"/>
+
+  <!-- Agulha -->
+  <line x1="200" y1="172" x2="200" y2="195" stroke="#2d1a0e" stroke-width="2"/>
+  <ellipse cx="200" cy="195" rx="2" ry="3" fill="#2d1a0e"/>
+
+  <!-- Bobina/roda direita -->
+  <circle cx="258" cy="140" r="18" fill="none" stroke="#2d1a0e" stroke-width="2.5"/>
+  <circle cx="258" cy="140" r="10" fill="none" stroke="#2d1a0e" stroke-width="1.5"/>
+  <circle cx="258" cy="140" r="3" fill="#2d1a0e"/>
+  <!-- Braço da bobina -->
+  <rect x="248" y="136" width="22" height="8" rx="2" fill="#2d1a0e"/>
+
+  <!-- Detalhe janela/visor -->
+  <ellipse cx="185" cy="145" rx="10" ry="8" fill="none" stroke="#2d1a0e" stroke-width="1.5"/>
+
+  <!-- Curvas decorativas dos lados (estilo vintage) -->
+  <path d="M100 178 Q140 165 128 175" stroke="#2d1a0e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M300 178 Q260 165 272 175" stroke="#2d1a0e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M88 182 Q116 175 108 180" stroke="#2d1a0e" stroke-width="1" stroke-linecap="round" fill="none"/>
+  <path d="M312 182 Q284 175 292 180" stroke="#2d1a0e" stroke-width="1" stroke-linecap="round" fill="none"/>
+
+  <!-- Linha divisória superior do texto -->
+  <line x1="120" y1="200" x2="280" y2="200" stroke="#2d1a0e" stroke-width="1"/>
+
+  <!-- Texto NATI CETIM -->
+  <text x="200" y="248" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="48" font-weight="bold" letter-spacing="3" fill="#2d1a0e">NATI CETIM</text>
+
+  <!-- Linha com coração -->
+  <line x1="130" y1="264" x2="178" y2="264" stroke="#2d1a0e" stroke-width="1"/>
+  <text x="200" y="268" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#2d1a0e">♥</text>
+  <line x1="222" y1="264" x2="270" y2="264" stroke="#2d1a0e" stroke-width="1"/>
+
+  <!-- Texto UM TOQUE DE CUIDADO -->
+  <text x="200" y="295" text-anchor="middle" font-family="Georgia, 'Helvetica Neue', sans-serif" font-size="13" letter-spacing="4" fill="#2d1a0e">UM TOQUE DE CUIDADO</text>
+</svg>

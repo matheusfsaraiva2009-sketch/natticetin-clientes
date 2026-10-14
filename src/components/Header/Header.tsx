@@ -36,22 +36,15 @@ export function Header({ onCartOpen }: HeaderProps) {
       <div className="container header__inner">
         {/* Logo / Brand */}
         <Link to="/" className="header__brand">
-          {settings.logoUrl ? (
-            <img
-              src={settings.logoUrl}
-              alt={`Logo ${settings.brandName}`}
-              className="header__logo"
-            />
-          ) : (
-            <div className="header__logo-placeholder">
-              <span className="header__logo-initial">
-                {settings.brandName.charAt(0)}
-              </span>
-            </div>
-          )}
+          {/* Logo fixo da Nati Cetim */}
+          <img
+            src="/logo-nati-cetim.svg"
+            alt="Logo Nati Cetim"
+            className="header__logo"
+          />
           <div className="header__brand-text">
             <span className="header__brand-name">{settings.brandName}</span>
-            <span className="header__brand-tagline">Acessórios de cetim</span>
+            <span className="header__brand-tagline">Um toque de cuidado</span>
           </div>
         </Link>
 
@@ -162,7 +155,7 @@ export function Header({ onCartOpen }: HeaderProps) {
                   rel="noopener noreferrer"
                   className="header__mobile-link"
                 >
-                  📷 Instagram
+                  Instagram
                 </a>
               </li>
             )}
@@ -174,7 +167,7 @@ export function Header({ onCartOpen }: HeaderProps) {
                   rel="noopener noreferrer"
                   className="header__mobile-link header__mobile-link--whatsapp"
                 >
-                  💬 Falar pelo WhatsApp
+                  Falar pelo WhatsApp
                 </a>
               </li>
             )}
