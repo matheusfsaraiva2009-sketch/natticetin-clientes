@@ -1,0 +1,2 @@
+/* ProductForm e SettingsForm compartilham o mesmo CSS do AdminPage.css */
+/* Este arquivo existe para que o import no ProductForm.tsx seja resolvido */

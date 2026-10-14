@@ -1,0 +1,66 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Funções auxiliares ──────────────────────────────────────────────────
+
+    // Verifica se o usuário está autenticado E é administrador
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Verifica se o usuário está apenas autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Valida campos obrigatórios de produto
+    function isValidProduct() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['name', 'category', 'price', 'stock', 'active'])
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.category in ['toucas', 'scrunchies']
+        && data.price is int && data.price >= 0
+        && data.stock is int && data.stock >= 0
+        && data.active is bool;
+    }
+
+    // ── Coleção de Administradores ──────────────────────────────────────────
+    match /admins/{uid} {
+      // O próprio usuário autenticado pode verificar se é admin
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+
+      // APENAS via Firebase Admin SDK (backend confiável).
+      // Nenhum usuário do frontend pode criar, editar ou excluir admins.
+      allow write: if false;
+    }
+
+    // ── Produtos ────────────────────────────────────────────────────────────
+    match /products/{productId} {
+      // Visitantes podem ler apenas produtos ativos (active == true)
+      allow read: if resource.data.active == true || isAdmin();
+
+      // Admins podem criar, atualizar e excluir
+      allow create: if isAdmin() && isValidProduct();
+      allow update: if isAdmin() && isValidProduct();
+      allow delete: if isAdmin();
+    }
+
+    // ── Configurações públicas da loja ──────────────────────────────────────
+    match /settings/{document} {
+      // Qualquer visitante pode ler as configurações públicas
+      allow read: if true;
+
+      // Apenas admins podem alterar
+      allow write: if isAdmin();
+    }
+
+    // ── Negar todo o resto ─────────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,58 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── Funções auxiliares ──────────────────────────────────────────────────
+
+    // Verifica se o tamanho do arquivo é menor que 5 MB
+    function isUnder5MB() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+
+    // Verifica se é um tipo de imagem permitido
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // Verifica se o usuário está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // ── Imagens de produtos ─────────────────────────────────────────────────
+    // Organizado em: products/{productId}/{filename}
+    match /products/{productId}/{filename} {
+      // Qualquer visitante pode ler imagens de produtos (para exibir no catálogo)
+      allow read: if true;
+
+      // Apenas usuários autenticados podem fazer upload
+      // (as Firestore Rules garantem que só admins salvam produtos com essas URLs)
+      allow write: if isAuthenticated()
+        && isImage()
+        && isUnder5MB();
+
+      // Apenas usuários autenticados podem excluir
+      allow delete: if isAuthenticated();
+    }
+
+    // ── Imagens de branding (logo e hero) ───────────────────────────────────
+    // Organizado em: branding/{filename}
+    match /branding/{filename} {
+      // Qualquer visitante pode ler imagens de branding
+      allow read: if true;
+
+      // Apenas usuários autenticados podem fazer upload
+      allow write: if isAuthenticated()
+        && isImage()
+        && isUnder5MB();
+
+      allow delete: if isAuthenticated();
+    }
+
+    // ── Negar acesso a qualquer outro caminho ───────────────────────────────
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
