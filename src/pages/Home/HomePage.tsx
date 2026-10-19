@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useSettings } from '../../contexts/SettingsContext'
 import { useProductsByCategory } from '../../hooks/useProducts'
 import { ProductGrid } from '../../components/ProductGrid/ProductGrid'
@@ -9,10 +10,35 @@ export function HomePage() {
   const { products: toucas, isLoading: loadingToucas, error: errorToucas } = useProductsByCategory('toucas')
   const { products: scrunchies, isLoading: loadingScrunchies, error: errorScrunchies } = useProductsByCategory('scrunchies')
 
+  const [activeTab, setActiveTab] = useState<'toucas' | 'scrunchies'>('toucas')
+
   const featuredProducts = [...toucas, ...scrunchies].filter((p) => p.featured)
+
+  // Lê a hash da URL para definir a aba ativa
+  useEffect(() => {
+    function handleHash() {
+      const hash = window.location.hash
+      if (hash === '#scrunchies') {
+        setActiveTab('scrunchies')
+        document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' })
+      } else if (hash === '#toucas') {
+        setActiveTab('toucas')
+        document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+    handleHash()
+    window.addEventListener('hashchange', handleHash)
+    return () => window.removeEventListener('hashchange', handleHash)
+  }, [])
 
   function scrollToSection(id: string) {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  function goToTab(tab: 'toucas' | 'scrunchies') {
+    setActiveTab(tab)
+    window.location.hash = tab
+    scrollToSection('produtos')
   }
 
   return (
@@ -42,14 +68,14 @@ export function HomePage() {
               </p>
               <div className="hero__actions">
                 <button
-                  onClick={() => scrollToSection('toucas')}
+                  onClick={() => goToTab('toucas')}
                   className="btn btn-primary btn-lg"
                   id="btn-hero-toucas"
                 >
                   Ver Toucas
                 </button>
                 <button
-                  onClick={() => scrollToSection('scrunchies')}
+                  onClick={() => goToTab('scrunchies')}
                   className="btn btn-secondary btn-lg hero__btn-scrunchies"
                   id="btn-hero-scrunchies"
                 >
@@ -102,27 +128,67 @@ export function HomePage() {
         </section>
       )}
 
-      {/* ── Toucas ── */}
-      <ProductGrid
-        products={toucas}
-        isLoading={loadingToucas}
-        error={errorToucas}
-        title="Toucas Dupla Face"
-        subtitle="Proteção e elegância para o seu cabelo"
-        id="toucas"
-        emptyMessage="As toucas dupla face estarão disponíveis em breve. Siga nosso Instagram para novidades!"
-      />
+      {/* ── Produtos com abas ── */}
+      <section id="produtos" className="products-tabs-section">
+        <div className="container">
+          <div className="products-tabs" role="tablist" aria-label="Categorias de produtos">
+            <button
+              role="tab"
+              id="tab-toucas"
+              aria-selected={activeTab === 'toucas'}
+              aria-controls="panel-toucas"
+              className={`products-tab ${activeTab === 'toucas' ? 'products-tab--active' : ''}`}
+              onClick={() => setActiveTab('toucas')}
+            >
+              Toucas
+            </button>
+            <button
+              role="tab"
+              id="tab-scrunchies"
+              aria-selected={activeTab === 'scrunchies'}
+              aria-controls="panel-scrunchies"
+              className={`products-tab ${activeTab === 'scrunchies' ? 'products-tab--active' : ''}`}
+              onClick={() => setActiveTab('scrunchies')}
+            >
+              Scrunchie
+            </button>
+          </div>
+        </div>
 
-      {/* ── Scrunchies ── */}
-      <ProductGrid
-        products={scrunchies}
-        isLoading={loadingScrunchies}
-        error={errorScrunchies}
-        title="Scrunchies de Cetim"
-        subtitle="Delicadeza e estilo para o seu dia a dia"
-        id="scrunchies"
-        emptyMessage="Os scrunchies de cetim estarão disponíveis em breve. Volte em breve!"
-      />
+        <div
+          role="tabpanel"
+          id="panel-toucas"
+          aria-labelledby="tab-toucas"
+          style={{ display: activeTab === 'toucas' ? 'block' : 'none' }}
+        >
+          <ProductGrid
+            products={toucas}
+            isLoading={loadingToucas}
+            error={errorToucas}
+            title="Toucas Dupla Face"
+            subtitle="Proteção e elegância para o seu cabelo"
+            id="toucas"
+            emptyMessage="As toucas dupla face estarão disponíveis em breve. Siga nosso Instagram para novidades!"
+          />
+        </div>
+
+        <div
+          role="tabpanel"
+          id="panel-scrunchies"
+          aria-labelledby="tab-scrunchies"
+          style={{ display: activeTab === 'scrunchies' ? 'block' : 'none' }}
+        >
+          <ProductGrid
+            products={scrunchies}
+            isLoading={loadingScrunchies}
+            error={errorScrunchies}
+            title="Scrunchies de Cetim"
+            subtitle="Delicadeza e estilo para o seu dia a dia"
+            id="scrunchies"
+            emptyMessage="Os scrunchies de cetim estarão disponíveis em breve. Volte em breve!"
+          />
+        </div>
+      </section>
 
       {/* ── CTA WhatsApp ── */}
       {settings.whatsappNumber && (

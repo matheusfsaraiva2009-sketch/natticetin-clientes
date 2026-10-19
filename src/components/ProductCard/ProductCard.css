@@ -109,26 +109,20 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
-  color: var(--text-secondary, #6b5345);
-}
-
-.product-card__color-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--color-mocha, #9a7a5a);
-  border: 2px solid rgba(0,0,0,0.12);
-  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-espresso, #3b2a1a);
+  letter-spacing: 0.01em;
 }
 
 .product-card__size {
   display: inline-flex;
   align-items: center;
-  font-size: 13px;
-  color: var(--text-secondary, #6b5345);
-  background: rgba(121, 92, 73, 0.08);
-  padding: 2px 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-espresso, #3b2a1a);
+  background: rgba(121, 92, 73, 0.10);
+  padding: 3px 10px;
   border-radius: 20px;
 }
 
@@ -160,15 +154,16 @@
 
 .product-card__price {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 500;
+  font-size: 1.65rem;
+  font-weight: 700;
   color: var(--color-espresso, #3b2a1a);
   line-height: 1;
 }
 
 .product-card__stock {
-  font-size: 11px;
-  color: var(--text-muted, #9c8276);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-mocha, #795c49);
 }
 
 /* Botão "Adicionar ao carrinho" largo (ocupa toda a largura) */
@@ -235,16 +230,26 @@
   }
 
   .product-card__body {
-    padding: 12px 12px 14px;
-    gap: 6px;
+    padding: 10px 10px 12px;
+    gap: 5px;
   }
 
-  .product-card__name {
-    font-size: 1rem;
+  /* Cor e tamanho legíveis mas não exagerados */
+  .product-card__color {
+    font-size: 13px;
+  }
+
+  .product-card__size {
+    font-size: 12px;
+    padding: 2px 7px;
   }
 
   .product-card__price {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+  }
+
+  .product-card__stock {
+    font-size: 11px;
   }
 
   /* Botão maior para dedos */
@@ -262,11 +267,23 @@
 
 @media (max-width: 360px) {
   .product-card__body {
-    padding: 10px;
+    padding: 8px;
+    gap: 4px;
   }
 
-  .product-card__name {
-    font-size: 0.9rem;
+  .product-card__color {
+    font-size: 12px;
+  }
+
+  .product-card__size {
+    font-size: 11px;
+  }
+
+  .product-card__price {
+    font-size: 1.15rem;
+  }
+
+  .product-card__stock {
+    font-size: 10px;
   }
 }
-

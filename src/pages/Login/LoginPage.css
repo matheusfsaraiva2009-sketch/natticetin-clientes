@@ -13,88 +13,24 @@
 .login-page__left {
   display: none;
   width: 45%;
-  background: linear-gradient(145deg, var(--color-espresso) 0%, var(--color-mocha) 100%);
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
   .login-page__left {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
   }
 }
 
-.login-page__left-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: var(--space-12);
-}
-
-.login-page__brand-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(242, 233, 220, 0.15);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-size: 3rem;
-  color: var(--color-creme);
-  margin: 0 auto var(--space-6);
-  border: 1px solid rgba(242, 233, 220, 0.2);
-}
-
-.login-page__brand-title {
-  font-family: var(--font-display);
-  font-size: var(--text-3xl);
-  font-weight: 400;
-  color: var(--color-creme);
-  margin-bottom: var(--space-2);
-}
-
-.login-page__brand-subtitle {
-  font-size: var(--text-sm);
-  color: rgba(242, 233, 220, 0.6);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin: 0;
-}
-
-.login-page__decorations {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.login-page__dec {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(242, 233, 220, 0.06);
-}
-
-.login-page__dec--1 {
-  width: 300px;
-  height: 300px;
-  top: -80px;
-  left: -80px;
-}
-
-.login-page__dec--2 {
-  width: 200px;
-  height: 200px;
-  bottom: 60px;
-  right: -40px;
-}
-
-.login-page__dec--3 {
-  width: 120px;
-  height: 120px;
-  bottom: 20%;
-  left: 10%;
+/* Logo cobre 100% do painel marrom */
+.login-page__logo-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 /* ── Right panel ── */

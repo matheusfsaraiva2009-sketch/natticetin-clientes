@@ -37,8 +37,8 @@
   --border-focus:     #795C49;
 
   /* Tipografia */
-  --font-display:     'Cormorant Garamond', Georgia, serif;
-  --font-body:        'Jost', system-ui, sans-serif;
+  --font-display:     'Montserrat', system-ui, sans-serif;
+  --font-body:        'Open Sans', system-ui, sans-serif;
 
   /* Tamanhos */
   --text-xs:    0.75rem;
@@ -93,6 +93,11 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Garante que o atributo hidden sempre funcione */
+[hidden] {
+  display: none !important;
 }
 
 html {

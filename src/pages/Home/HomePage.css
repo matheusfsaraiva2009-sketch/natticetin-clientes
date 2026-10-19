@@ -1,7 +1,7 @@
 /* ── Hero ── */
 .hero {
   position: relative;
-  min-height: 85vh;
+  min-height: 55vh;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -215,11 +215,11 @@
 @media (max-width: 640px) {
   /* Hero mais compacto em mobile */
   .hero {
-    min-height: 70vh;
+    min-height: 45vh;
   }
 
   .hero__content {
-    padding: var(--space-12) 0;
+    padding: var(--space-8) 0;
   }
 
   .hero__text {
@@ -275,3 +275,79 @@
   }
 }
 
+/* ── Product Tabs ── */
+.products-tabs-section {
+  background: var(--bg-primary);
+}
+
+.products-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--color-latte, #e8ddd4);
+  padding-top: var(--space-10, 2.5rem);
+}
+
+.products-tab {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-3, 0.75rem) var(--space-8, 2rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease;
+  outline: none;
+}
+
+.products-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-espresso);
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+}
+
+.products-tab:hover {
+  color: var(--color-mocha, #7a5c48);
+}
+
+.products-tab--active {
+  color: var(--color-espresso);
+  font-weight: 600;
+}
+
+.products-tab--active::after {
+  transform: scaleX(1);
+}
+
+/* ── Mobile: tabs e cards ── */
+@media (max-width: 640px) {
+  /* Abas ocupam metade cada em mobile */
+  .products-tabs {
+    padding-top: var(--space-6, 1.5rem);
+  }
+
+  .products-tab {
+    flex: 1;
+    text-align: center;
+    padding: var(--space-3) var(--space-2);
+    font-size: 1rem;
+  }
+
+  /* Hero title menor */
+  .hero__title {
+    font-size: clamp(1.8rem, 7vw, 2.8rem);
+  }
+
+  .hero__subtitle {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-6);
+  }
+}

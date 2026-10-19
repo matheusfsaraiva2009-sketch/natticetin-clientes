@@ -21,9 +21,6 @@ export function ProductCard({ product }: ProductCardProps) {
   const cartQty = cartItem?.quantity ?? 0
   const maxReached = cartQty >= product.stock
 
-  const categoryLabel =
-    product.category === 'toucas' ? 'Touca Dupla Face' : 'Scrunchie de Cetim'
-
   function handleAddToCart() {
     if (isUnavailable || maxReached) return
 
@@ -81,13 +78,8 @@ export function ProductCard({ product }: ProductCardProps) {
 
       {/* Conteúdo */}
       <div className="product-card__body">
-        <div className="product-card__category">{categoryLabel}</div>
-
-        <h3 className="product-card__name">{product.name}</h3>
-
         <div className="product-card__meta">
           <span className="product-card__color">
-            <span className="product-card__color-dot" aria-hidden="true" />
             {product.color}
           </span>
           {product.size && (

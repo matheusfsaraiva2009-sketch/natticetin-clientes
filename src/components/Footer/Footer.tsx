@@ -11,17 +11,11 @@ export function Footer() {
         <div className="footer__inner">
           {/* Brand column */}
           <div className="footer__brand">
-            {settings.logoUrl ? (
-              <img
-                src={settings.logoUrl}
-                alt={`Logo ${settings.brandName}`}
-                className="footer__logo"
-              />
-            ) : (
-              <div className="footer__logo-placeholder">
-                <span>{settings.brandName.charAt(0)}</span>
-              </div>
-            )}
+            <img
+              src="/logo-nati-cetim.png"
+              alt="Logo Nati Cetim"
+              className="footer__logo"
+            />
             <h3 className="footer__brand-name">{settings.brandName}</h3>
             {settings.description && (
               <p className="footer__description">{settings.description}</p>
@@ -32,8 +26,8 @@ export function Footer() {
           <div className="footer__links">
             <h4 className="footer__links-title">Catálogo</h4>
             <ul>
-              <li><a href="/#toucas" className="footer__link">Toucas Dupla Face</a></li>
-              <li><a href="/#scrunchies" className="footer__link">Scrunchies de Cetim</a></li>
+              <li><a href="/#produtos" className="footer__link">Toucas Dupla Face</a></li>
+              <li><a href="/#produtos" className="footer__link">Scrunchies de Cetim</a></li>
             </ul>
           </div>
 

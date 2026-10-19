@@ -64,16 +64,11 @@ export function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-page__left" aria-hidden="true">
-        <div className="login-page__left-content">
-          <img src="/logo-nati-cetim.svg" alt="Logo Nati Cetim" style={{ width: 120, height: 120, objectFit: 'contain' }} />
-          <h2 className="login-page__brand-title">Nati Cetim</h2>
-          <p className="login-page__brand-subtitle">Painel Administrativo</p>
-          <div className="login-page__decorations">
-            <div className="login-page__dec login-page__dec--1" />
-            <div className="login-page__dec login-page__dec--2" />
-            <div className="login-page__dec login-page__dec--3" />
-          </div>
-        </div>
+        <img
+          src="/logo-nati-cetim.png"
+          alt="Logo Nati Cetim"
+          className="login-page__logo-cover"
+        />
       </div>
 
       <main className="login-page__right">

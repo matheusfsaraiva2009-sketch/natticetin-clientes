@@ -36,16 +36,11 @@ export function Header({ onCartOpen }: HeaderProps) {
       <div className="container header__inner">
         {/* Logo / Brand */}
         <Link to="/" className="header__brand">
-          {/* Logo fixo da Nati Cetim */}
           <img
-            src="/logo-nati-cetim.svg"
+            src="/logo-nati-cetim.png"
             alt="Logo Nati Cetim"
             className="header__logo"
           />
-          <div className="header__brand-text">
-            <span className="header__brand-name">{settings.brandName}</span>
-            <span className="header__brand-tagline">Um toque de cuidado</span>
-          </div>
         </Link>
 
         {/* Nav desktop */}
