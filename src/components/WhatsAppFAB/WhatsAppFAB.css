@@ -1,0 +1,63 @@
+/* ── Floating WhatsApp Button ── */
+.whatsapp-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 44;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #25D366;
+  color: #fff;
+  border-radius: 56px;
+  padding: 14px 20px 14px 16px;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.45);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.2s ease;
+  animation: fabEntrance 0.5s 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.whatsapp-fab:hover {
+  background: #1DAA54;
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 8px 28px rgba(37, 211, 102, 0.55);
+}
+
+.whatsapp-fab:active {
+  transform: scale(0.97);
+}
+
+.whatsapp-fab__label {
+  display: inline;
+}
+
+/* Em mobile, esconde o label e fica só como bolinha */
+@media (max-width: 640px) {
+  .whatsapp-fab {
+    bottom: 20px;
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+
+  .whatsapp-fab__label {
+    display: none;
+  }
+}
+
+@keyframes fabEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.4) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

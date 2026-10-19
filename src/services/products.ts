@@ -14,7 +14,7 @@ import {
   type Unsubscribe,
 } from 'firebase/firestore'
 import { db } from './firebase'
-import type { Product, ProductCategory, ProductFormData } from '../types'
+import type { Product, ProductCategory, ProductFormData, SizeVariant } from '../types'
 
 const PRODUCTS_COLLECTION = 'products'
 
@@ -31,6 +31,7 @@ function docToProduct(id: string, data: Record<string, unknown>): Product {
     size: (data.size as string) || '',
     price: (data.price as number) || 0,
     stock: (data.stock as number) || 0,
+    variants: (data.variants as SizeVariant[]) || [],
     imageUrl: (data.imageUrl as string) || '',
     imageUrls: (data.imageUrls as string[]) || [],
     active: (data.active as boolean) ?? true,

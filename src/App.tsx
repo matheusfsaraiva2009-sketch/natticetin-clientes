@@ -6,6 +6,7 @@ import { SettingsProvider } from './contexts/SettingsContext'
 import { Header } from './components/Header/Header'
 import { Footer } from './components/Footer/Footer'
 import { CartDrawer } from './components/Cart/CartDrawer'
+import { WhatsAppFAB } from './components/WhatsAppFAB/WhatsAppFAB'
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute'
 import { HomePage } from './pages/Home/HomePage'
 import { LoginPage } from './pages/Login/LoginPage'
@@ -25,6 +26,7 @@ function PublicLayout() {
       </div>
       <Footer />
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <WhatsAppFAB />
     </div>
   )
 }

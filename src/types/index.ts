@@ -2,15 +2,23 @@ export type ProductCategory = 'toucas' | 'scrunchies'
 
 export type ProductStatus = 'active' | 'inactive' | 'out_of_stock'
 
+/** Variante de tamanho com estoque e preço próprios */
+export interface SizeVariant {
+  size: string    // ex: "M", "G", "Único"
+  price: number   // in centavos
+  stock: number
+}
+
 export interface Product {
   id: string
   name: string
   category: ProductCategory
   description: string
   color: string
-  size: string
-  price: number // stored in centavos (e.g. 2500 = R$25,00)
-  stock: number
+  size: string        // legado / fallback quando não há variantes
+  price: number       // legado / fallback
+  stock: number       // legado / soma total quando há variantes
+  variants: SizeVariant[]  // [] = sem variantes de tamanho
   imageUrl: string
   imageUrls: string[]
   active: boolean
@@ -28,6 +36,7 @@ export interface ProductFormData {
   size: string
   price: number // in centavos
   stock: number
+  variants: SizeVariant[]
   imageUrl: string
   imageUrls: string[]
   active: boolean

@@ -130,28 +130,30 @@ export function HomePage() {
 
       {/* ── Produtos com abas ── */}
       <section id="produtos" className="products-tabs-section">
-        <div className="container">
-          <div className="products-tabs" role="tablist" aria-label="Categorias de produtos">
-            <button
-              role="tab"
-              id="tab-toucas"
-              aria-selected={activeTab === 'toucas'}
-              aria-controls="panel-toucas"
-              className={`products-tab ${activeTab === 'toucas' ? 'products-tab--active' : ''}`}
-              onClick={() => setActiveTab('toucas')}
-            >
-              Toucas
-            </button>
-            <button
-              role="tab"
-              id="tab-scrunchies"
-              aria-selected={activeTab === 'scrunchies'}
-              aria-controls="panel-scrunchies"
-              className={`products-tab ${activeTab === 'scrunchies' ? 'products-tab--active' : ''}`}
-              onClick={() => setActiveTab('scrunchies')}
-            >
-              Scrunchie
-            </button>
+        <div className="products-tabs-sticky">
+          <div className="container">
+            <div className="products-tabs" role="tablist" aria-label="Categorias de produtos">
+              <button
+                role="tab"
+                id="tab-toucas"
+                aria-selected={activeTab === 'toucas'}
+                aria-controls="panel-toucas"
+                className={`products-tab ${activeTab === 'toucas' ? 'products-tab--active' : ''}`}
+                onClick={() => setActiveTab('toucas')}
+              >
+                Toucas
+              </button>
+              <button
+                role="tab"
+                id="tab-scrunchies"
+                aria-selected={activeTab === 'scrunchies'}
+                aria-controls="panel-scrunchies"
+                className={`products-tab ${activeTab === 'scrunchies' ? 'products-tab--active' : ''}`}
+                onClick={() => setActiveTab('scrunchies')}
+              >
+                Scrunchie
+              </button>
+            </div>
           </div>
         </div>
 

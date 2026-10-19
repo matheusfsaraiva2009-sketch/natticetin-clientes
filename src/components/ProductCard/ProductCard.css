@@ -214,6 +214,94 @@
   margin: 0;
   text-align: center;
 }
+/* ── Size Variants ── */
+.product-card__variants {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.product-card__variants-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.product-card__size-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.size-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-espresso);
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, color 0.18s;
+  overflow: hidden;
+}
+
+.size-btn:hover:not(:disabled):not(.size-btn--active) {
+  border-color: var(--color-mocha);
+  background: var(--bg-secondary);
+}
+
+.size-btn--active {
+  border-color: var(--color-espresso);
+  background: var(--color-espresso);
+  color: #fff;
+}
+
+.size-btn--empty {
+  opacity: 0.45;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* Linha diagonal sobre tamanho esgotado */
+.size-btn__line {
+  position: absolute;
+  top: 50%;
+  left: -4px;
+  right: -4px;
+  height: 1.5px;
+  background: var(--text-muted);
+  transform: rotate(-25deg);
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.product-card__variant-stock {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .size-btn {
+    min-width: 36px;
+    height: 32px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+}
+
 
 /* ═══════════════════════════════════════════════
    MELHORIAS MOBILE — Product Card

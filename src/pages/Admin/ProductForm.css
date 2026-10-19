@@ -1,2 +1,183 @@
 /* ProductForm e SettingsForm compartilham o mesmo CSS do AdminPage.css */
 /* Este arquivo existe para que o import no ProductForm.tsx seja resolvido */
+
+/* ═══════════════════════════════════════════════
+   VARIANTS — Editor de tamanhos/preços/estoques
+   ═══════════════════════════════════════════════ */
+
+.product-form__variants-section {
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.product-form__variants-header p {
+  margin-top: var(--space-1);
+}
+
+/* Tabela de variantes */
+.variants-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #fff;
+}
+
+.variants-table__header {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr 36px;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-secondary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.variants-table__row {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr 36px;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--border-color);
+}
+
+.variants-table__size {
+  font-weight: 700;
+  color: var(--color-espresso);
+  font-size: var(--text-sm);
+}
+
+.variants-table__input {
+  min-height: 36px !important;
+  padding: var(--space-1) var(--space-2) !important;
+  font-size: var(--text-sm) !important;
+}
+
+.variants-table__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.variants-table__remove:hover {
+  color: var(--color-error);
+  background: rgba(192,87,79,0.08);
+}
+
+.variants-table__total {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-4);
+  border-top: 2px solid var(--border-color);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+}
+
+.variants-table__total strong {
+  color: var(--color-espresso);
+}
+
+/* Adicionar nova variante */
+.variants-add__label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-2);
+}
+
+.variants-add__row {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr auto;
+  gap: var(--space-2);
+  align-items: end;
+}
+
+.variants-add__btn {
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+/* Resumo sidebar */
+.product-form__variants-summary {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #fff;
+}
+
+.product-form__variants-summary .product-form__section-title {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  margin-bottom: 0;
+}
+
+.variants-summary__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--text-sm);
+}
+
+.variants-summary__row:last-child {
+  border-bottom: none;
+}
+
+.variants-summary__size {
+  font-weight: 700;
+  color: var(--color-espresso);
+  min-width: 40px;
+}
+
+.variants-summary__price {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.variants-summary__stock {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .variants-table__header,
+  .variants-table__row {
+    grid-template-columns: 60px 1fr 1fr 28px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .variants-add__row {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+
+  .variants-add__btn {
+    grid-column: 1 / -1;
+  }
+}

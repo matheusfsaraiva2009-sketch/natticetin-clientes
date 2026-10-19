@@ -24,10 +24,36 @@
   animation: slideInRight 0.3s ease;
 }
 
-@media (max-width: 480px) {
+/* Mobile: bottom sheet */
+@media (max-width: 640px) {
   .cart-drawer {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
     max-width: 100%;
+    max-height: 92dvh;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 40px rgba(74,51,40,0.20);
+    animation: slideUpSheet 0.32s cubic-bezier(0.32, 0.72, 0, 1);
   }
+
+  /* Handle visual no topo do bottom sheet */
+  .cart-drawer::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: var(--color-bege);
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes slideUpSheet {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
 }
 
 /* ── Header ── */

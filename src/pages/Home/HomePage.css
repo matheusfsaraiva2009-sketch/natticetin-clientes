@@ -280,11 +280,19 @@
   background: var(--bg-primary);
 }
 
+/* Sticky tabs container */
+.products-tabs-sticky {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 10;
+  background: var(--bg-primary);
+  padding-top: var(--space-6);
+}
+
 .products-tabs {
   display: flex;
   gap: 0;
   border-bottom: 2px solid var(--color-latte, #e8ddd4);
-  padding-top: var(--space-10, 2.5rem);
 }
 
 .products-tab {
@@ -300,6 +308,7 @@
   letter-spacing: 0.01em;
   transition: color 0.2s ease;
   outline: none;
+  white-space: nowrap;
 }
 
 .products-tab::after {
@@ -329,25 +338,35 @@
 
 /* ── Mobile: tabs e cards ── */
 @media (max-width: 640px) {
-  /* Abas ocupam metade cada em mobile */
-  .products-tabs {
-    padding-top: var(--space-6, 1.5rem);
+  .products-tabs-sticky {
+    padding-top: var(--space-4);
+    box-shadow: 0 4px 12px rgba(74,51,40,0.06);
   }
 
+  /* Abas ocupam metade cada em mobile */
   .products-tab {
     flex: 1;
     text-align: center;
     padding: var(--space-3) var(--space-2);
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
-  /* Hero title menor */
+  /* Hero compacto em mobile */
+  .hero {
+    min-height: 38vh;
+  }
+
+  .hero__content {
+    padding: var(--space-6) 0;
+  }
+
   .hero__title {
-    font-size: clamp(1.8rem, 7vw, 2.8rem);
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+    margin-bottom: var(--space-4);
   }
 
   .hero__subtitle {
     font-size: var(--text-sm);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-5);
   }
 }

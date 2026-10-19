@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Product } from '../../types'
+import type { Product, SizeVariant } from '../../types'
 import { formatCurrency } from '../../utils'
 import { useCart } from '../../contexts/CartContext'
 import './ProductCard.css'
@@ -13,24 +13,38 @@ export function ProductCard({ product }: ProductCardProps) {
   const [imgError, setImgError] = useState(false)
   const [added, setAdded] = useState(false)
 
-  const isOutOfStock = product.stock === 0 || product.status === 'out_of_stock'
+  const hasVariants = product.variants && product.variants.length > 0
+
+  // Tamanho selecionado (variante ou fallback)
+  const [selectedVariant, setSelectedVariant] = useState<SizeVariant | null>(
+    hasVariants ? product.variants[0] : null
+  )
+
+  // Dados ativos (variant ou produto direto)
+  const activePrice = selectedVariant ? selectedVariant.price : product.price
+  const activeSize = selectedVariant ? selectedVariant.size : product.size
+  const activeStock = selectedVariant ? selectedVariant.stock : product.stock
+
+  const isOutOfStock = activeStock === 0 || product.status === 'out_of_stock'
   const isInactive = !product.active || product.status === 'inactive'
   const isUnavailable = isOutOfStock || isInactive
 
-  const cartItem = items.find((i) => i.productId === product.id)
+  // Chave única no carrinho: productId + size (para permitir M e G separados)
+  const cartKey = `${product.id}__${activeSize}`
+  const cartItem = items.find((i) => i.productId === cartKey)
   const cartQty = cartItem?.quantity ?? 0
-  const maxReached = cartQty >= product.stock
+  const maxReached = cartQty >= activeStock
 
   function handleAddToCart() {
     if (isUnavailable || maxReached) return
 
     addItem({
-      productId: product.id,
+      productId: cartKey,
       name: product.name,
       category: product.category,
       color: product.color,
-      size: product.size,
-      price: product.price,
+      size: activeSize,
+      price: activePrice,
       imageUrl: product.imageUrl,
       quantity: 1,
     })
@@ -62,7 +76,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        {/* Badges sobre a imagem */}
+        {/* Badges */}
         <div className="product-card__badges">
           {product.featured && (
             <span className="badge badge-featured">Destaque</span>
@@ -79,30 +93,60 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Conteúdo */}
       <div className="product-card__body">
         <div className="product-card__meta">
-          <span className="product-card__color">
-            {product.color}
-          </span>
-          {product.size && (
-            <span className="product-card__size">Tam: {product.size}</span>
-          )}
+          <span className="product-card__color">{product.color}</span>
         </div>
 
         {product.description && (
           <p className="product-card__description">{product.description}</p>
         )}
 
+        {/* Seletor de tamanho (variantes) */}
+        {hasVariants && (
+          <div className="product-card__variants">
+            <p className="product-card__variants-label">Tamanho</p>
+            <div className="product-card__size-buttons">
+              {product.variants.map((v) => {
+                const variantEmpty = v.stock === 0
+                const isSelected = selectedVariant?.size === v.size
+                return (
+                  <button
+                    key={v.size}
+                    type="button"
+                    onClick={() => !variantEmpty && setSelectedVariant(v)}
+                    disabled={variantEmpty}
+                    className={`size-btn ${isSelected ? 'size-btn--active' : ''} ${variantEmpty ? 'size-btn--empty' : ''}`}
+                    aria-label={`Tamanho ${v.size}${variantEmpty ? ' — esgotado' : ''}`}
+                    id={`btn-size-${product.id}-${v.size}`}
+                  >
+                    {v.size}
+                    {variantEmpty && <span className="size-btn__line" aria-hidden="true" />}
+                  </button>
+                )
+              })}
+            </div>
+            {selectedVariant && (
+              <p className="product-card__variant-stock">
+                {activeStock > 0
+                  ? `${activeStock} disponíve${activeStock === 1 ? 'l' : 'is'}`
+                  : 'Esgotado'}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Footer: preço + botão */}
         <div className="product-card__footer">
           <div className="product-card__price-area">
-            <span className="product-card__price">{formatCurrency(product.price)}</span>
-            {!isUnavailable && (
+            <span className="product-card__price">{formatCurrency(activePrice)}</span>
+            {!hasVariants && !isUnavailable && (
               <span className="product-card__stock">
-                {product.stock} disponíve{product.stock === 1 ? 'l' : 'is'}
+                {activeStock} disponíve{activeStock === 1 ? 'l' : 'is'}
               </span>
             )}
           </div>
 
           <button
-            id={`btn-add-cart-${product.id}`}
+            id={`btn-add-cart-${product.id}-${activeSize}`}
             onClick={handleAddToCart}
             disabled={isUnavailable || maxReached}
             className={`btn product-card__add-btn ${added ? 'product-card__add-btn--added' : ''}`}
@@ -111,7 +155,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 ? `${product.name} — Esgotado`
                 : isInactive
                 ? `${product.name} — Indisponível`
-                : `Adicionar ${product.name} ao carrinho`
+                : `Adicionar ${product.name} (${activeSize}) ao carrinho`
             }
           >
             {isOutOfStock ? (
@@ -133,7 +177,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                   <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/>
                 </svg>
-                Adicionar ao carrinho
+                Adicionar
               </>
             )}
           </button>
