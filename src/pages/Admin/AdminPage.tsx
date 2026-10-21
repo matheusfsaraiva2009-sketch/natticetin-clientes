@@ -1,17 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useAllProducts } from '../../hooks/useProducts'
 import { signOutUser } from '../../services/auth'
 import { deleteProduct } from '../../services/products'
-
+import { subscribeToOrders } from '../../services/orders'
 import { formatCurrency } from '../../utils'
-import type { Product } from '../../types'
+import type { Product, Order } from '../../types'
 import { ProductForm } from './ProductForm'
 import { SettingsForm } from './SettingsForm'
+import { OrdersTab } from './OrdersTab'
 import './AdminPage.css'
 
-type AdminTab = 'dashboard' | 'products' | 'add' | 'settings'
+type AdminTab = 'dashboard' | 'products' | 'orders' | 'add' | 'settings'
 
 export function AdminPage() {
   const { user } = useAuth()
@@ -23,6 +24,15 @@ export function AdminPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<Product | null>(null)
   const [successMessage, setSuccessMessage] = useState('')
+  const [pendingOrdersCount, setPendingOrdersCount] = useState(0)
+
+  // Observa contagem de pedidos pendentes
+  useEffect(() => {
+    const unsub = subscribeToOrders((orders: Order[]) => {
+      setPendingOrdersCount(orders.filter((o) => o.status === 'pending').length)
+    })
+    return () => unsub()
+  }, [])
 
   // Stats
   const totalProducts = products.length
@@ -128,6 +138,23 @@ export function AdminPage() {
           </button>
 
           <button
+            onClick={() => setActiveTab('orders')}
+            className={`admin-nav-btn ${activeTab === 'orders' ? 'is-active' : ''}`}
+            id="btn-admin-orders"
+            style={{ position: 'relative' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="1"/>
+              <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+            </svg>
+            Pedidos
+            {pendingOrdersCount > 0 && (
+              <span className="admin-nav-badge">{pendingOrdersCount}</span>
+            )}
+          </button>
+
+          <button
             onClick={() => setActiveTab('settings')}
             className={`admin-nav-btn ${activeTab === 'settings' ? 'is-active' : ''}`}
             id="btn-admin-settings"
@@ -169,6 +196,7 @@ export function AdminPage() {
           <h1 className="admin-topbar__title">
             {activeTab === 'dashboard' && 'Dashboard'}
             {activeTab === 'products' && 'Produtos'}
+            {activeTab === 'orders' && 'Pedidos'}
             {activeTab === 'add' && (editingProduct ? 'Editar produto' : 'Novo produto')}
             {activeTab === 'settings' && 'Configurações da marca'}
           </h1>
@@ -351,6 +379,11 @@ export function AdminPage() {
                 </div>
               )}
             </div>
+          )}
+
+          {/* ORDERS */}
+          {activeTab === 'orders' && (
+            <OrdersTab />
           )}
 
           {/* PRODUCT FORM */}

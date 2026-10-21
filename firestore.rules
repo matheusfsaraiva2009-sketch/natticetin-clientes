@@ -38,6 +38,15 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ── Pedidos ─────────────────────────────────────────────────────────────
+    match /orders/{orderId} {
+      // Qualquer visitante pode criar um pedido (cliente enviando pelo carrinho)
+      allow create: if true;
+
+      // Apenas admins podem ler, atualizar (confirmar/rejeitar) e excluir
+      allow read, update, delete: if isAdmin();
+    }
+
     // ── Produtos ────────────────────────────────────────────────────────────
     match /products/{productId} {
       // Visitantes podem ler apenas produtos ativos (active == true)
@@ -45,7 +54,7 @@ service cloud.firestore {
 
       // Admins podem criar, atualizar e excluir
       allow create: if isAdmin() && isValidProduct();
-      allow update: if isAdmin() && isValidProduct();
+      allow update: if isAdmin();
       allow delete: if isAdmin();
     }
 
@@ -62,5 +71,6 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+
   }
 }

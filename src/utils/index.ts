@@ -48,42 +48,44 @@ export interface WhatsappOrderItem {
   quantity: number
 }
 
-export function generateWhatsappMessage(items: WhatsappOrderItem[]): string {
+export function generateWhatsappMessage(items: WhatsappOrderItem[], orderId?: string): string {
   if (items.length === 0) return ''
 
-  const categoryLabel = (cat: string) => {
-    if (cat === 'toucas') return 'Touca dupla face'
-    if (cat === 'scrunchies') return 'Scrunchie de cetim'
-    return cat
-  }
-
   let total = 0
-  const itemLines = items.map((item, index) => {
+  const itemLines = items.map((item) => {
     const subtotal = item.price * item.quantity
     total += subtotal
-    return [
-      `${index + 1}. ${categoryLabel(item.category)}`,
-      `Modelo: ${item.name}`,
-      `Cor: ${item.color}`,
-      `Tamanho: ${item.size}`,
-      `Quantidade: ${item.quantity}`,
-      `Valor unitário: ${formatCurrency(item.price)}`,
-      `Subtotal: ${formatCurrency(subtotal)}`,
-    ].join('\n')
+
+    // Monta as partes da linha, omitindo tamanho quando vazio
+    const parts: string[] = [item.name, item.color]
+    if (item.size && item.size.trim() !== '') {
+      parts.push(item.size.trim())
+    }
+    parts.push(`${item.quantity} un.`)
+    parts.push(formatCurrency(subtotal))
+
+    return `• ${parts.join(' | ')}`
   })
 
-  return [
-    'Olá! Vim pelo catálogo da loja e gostaria de fazer um pedido. 😊',
+  const lines = [
+    'Olá! Segue meu pedido da Nati Cetim:',
     '',
-    '*MEU PEDIDO*',
+    itemLines.join('\n'),
     '',
-    itemLines.join('\n\n'),
-    '',
-    `*TOTAL ESTIMADO: ${formatCurrency(total)}*`,
-    '',
-    'Gostaria de confirmar a disponibilidade e combinar o pagamento e a entrega.',
-  ].join('\n')
+    `Total: ${formatCurrency(total)}`,
+  ]
+
+  if (orderId) {
+    lines.push('')
+    lines.push(`Nº do pedido: ${orderId}`)
+  }
+
+  lines.push('')
+  lines.push('Aguardo a confirmação.')
+
+  return lines.join('\n')
 }
+
 
 /**
  * Abre o WhatsApp com a mensagem pré-preenchida.
