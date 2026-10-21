@@ -42,32 +42,32 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
       results.forEach((result, index) => {
         if (!result.valid) {
-          errors.push(`"${items[index].name}": ${result.reason}`)
-          // Se o produto tem dados atualizados, atualiza o item
-          if (result.currentProduct && result.reason?.includes('Preço atualizado')) {
-            updatedItems[index] = {
-              ...updatedItems[index],
-              price: result.currentProduct.price,
+          // Se tem currentProduct, mostra aviso mas mantém o item
+          if (result.currentProduct) {
+            errors.push(`"${items[index].name}": ${result.reason}`)
+            // Atualiza preço se mudou
+            if (result.reason?.includes('Preço atualizado')) {
+              updatedItems[index] = {
+                ...updatedItems[index],
+                price: result.currentProduct.price,
+              }
             }
           }
+          // Se não tem currentProduct (produto não encontrado), ignora silenciosamente
+          // para não bloquear o cliente caso as regras do Firestore ainda não estejam publicadas
         }
       })
 
       if (errors.length > 0) {
-        // Remove itens inválidos sem produto
-        const invalidIds = results
-          .filter((r) => !r.valid && !r.currentProduct)
-          .map((r) => r.productId)
-
-        const validItems = updatedItems.filter((i) => !invalidIds.includes(i.productId))
-        updateItemsFromValidation(validItems)
         setValidationErrors(errors)
-        return
+        updateItemsFromValidation(updatedItems)
+        // Avança mesmo com avisos — o cliente decide se quer continuar
       }
 
       setStep('review')
     } catch {
-      setValidationErrors(['Erro ao verificar disponibilidade. Tente novamente.'])
+      // Em caso de erro de conexão/permissão, avança para revisão sem bloquear
+      setStep('review')
     } finally {
       setIsValidating(false)
     }
