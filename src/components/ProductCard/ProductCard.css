@@ -148,8 +148,8 @@
 
 .product-card__price-area {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .product-card__price {
@@ -164,6 +164,14 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--color-mocha, #795c49);
+}
+
+/* Preço de atacado — informação secundária discreta */
+.product-card__wholesale {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted, #9c8276);
+  letter-spacing: 0.01em;
 }
 
 /* Botão "Adicionar ao carrinho" largo (ocupa toda a largura) */
@@ -373,5 +381,241 @@
 
   .product-card__stock {
     font-size: 10px;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   MODAL DE QUANTIDADE
+   ═══════════════════════════════════════════════ */
+
+.qty-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(30, 18, 8, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: overlayFadeIn 0.2s ease;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0 }
+  to   { opacity: 1 }
+}
+
+.qty-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(30, 18, 8, 0.22);
+  width: 100%;
+  max-width: 360px;
+  padding: 28px 24px 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: modalSlideUp 0.25s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.97) }
+  to   { opacity: 1; transform: translateY(0) scale(1) }
+}
+
+/* Botão fechar */
+.qty-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--bg-secondary, #f5f0eb);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-espresso, #3b2a1a);
+  transition: background 0.18s, transform 0.18s;
+}
+
+.qty-modal__close:hover {
+  background: rgba(121, 92, 73, 0.18);
+  transform: scale(1.08);
+}
+
+/* Header com thumbnail + info */
+.qty-modal__header {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.qty-modal__thumb {
+  width: 64px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: var(--bg-secondary, #f5f0eb);
+}
+
+.qty-modal__name {
+  font-family: var(--font-display, serif);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-espresso, #3b2a1a);
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.qty-modal__info {
+  font-size: 13px;
+  color: var(--text-muted, #9c8276);
+  margin: 0 0 6px;
+}
+
+.qty-modal__price {
+  font-family: var(--font-display, serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-espresso, #3b2a1a);
+  margin: 0;
+}
+
+/* Seção de quantidade */
+.qty-modal__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.qty-modal__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted, #9c8276);
+  margin: 0;
+  align-self: flex-start;
+}
+
+.qty-modal__controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid var(--border-color, rgba(121, 92, 73, 0.22));
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.qty-modal__btn {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border: none;
+  background: var(--bg-secondary, #f5f0eb);
+  color: var(--color-espresso, #3b2a1a);
+  font-size: 22px;
+  font-weight: 300;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s;
+  line-height: 1;
+}
+
+.qty-modal__btn:hover:not(:disabled) {
+  background: rgba(121, 92, 73, 0.15);
+}
+
+.qty-modal__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.qty-modal__input {
+  flex: 1;
+  height: 52px;
+  border: none;
+  border-left: 1.5px solid var(--border-color, rgba(121, 92, 73, 0.22));
+  border-right: 1.5px solid var(--border-color, rgba(121, 92, 73, 0.22));
+  text-align: center;
+  font-family: var(--font-display, serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-espresso, #3b2a1a);
+  outline: none;
+  -moz-appearance: textfield;
+  background: #fff;
+}
+
+.qty-modal__input::-webkit-inner-spin-button,
+.qty-modal__input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.qty-modal__stock-info {
+  font-size: 12px;
+  color: var(--text-muted, #9c8276);
+  font-weight: 500;
+  margin: 0;
+  align-self: flex-start;
+}
+
+/* Botão confirmar */
+.qty-modal__confirm {
+  width: 100%;
+  background: var(--color-espresso, #3b2a1a);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.22s, transform 0.18s;
+  min-height: 50px;
+}
+
+.qty-modal__confirm:hover:not(:disabled) {
+  background: var(--color-mocha, #9a7a5a);
+  transform: translateY(-1px);
+}
+
+.qty-modal__confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 400px) {
+  .qty-modal {
+    padding: 22px 16px 18px;
+  }
+
+  .qty-modal__btn {
+    width: 44px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .qty-modal__input {
+    height: 48px;
+    font-size: 1.2rem;
   }
 }

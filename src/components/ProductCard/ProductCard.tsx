@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { Product, SizeVariant } from '../../types'
 import { formatCurrency } from '../../utils'
 import { useCart } from '../../contexts/CartContext'
@@ -12,6 +12,8 @@ export function ProductCard({ product }: ProductCardProps) {
   const { addItem, items } = useCart()
   const [imgError, setImgError] = useState(false)
   const [added, setAdded] = useState(false)
+  const [showQtyModal, setShowQtyModal] = useState(false)
+  const [modalQty, setModalQty] = useState(1)
 
   const hasVariants = product.variants && product.variants.length > 0
 
@@ -22,6 +24,12 @@ export function ProductCard({ product }: ProductCardProps) {
 
   // Dados ativos (variant ou produto direto)
   const activePrice = selectedVariant ? selectedVariant.price : product.price
+  const activeWholesalePrice = selectedVariant
+    ? selectedVariant.wholesalePrice
+    : product.wholesalePrice
+  const activeWholesaleMinQty = selectedVariant
+    ? selectedVariant.wholesaleMinQty
+    : product.wholesaleMinQty
   const activeSize = selectedVariant ? selectedVariant.size : product.size
   const activeStock = selectedVariant ? selectedVariant.stock : product.stock
 
@@ -35,8 +43,30 @@ export function ProductCard({ product }: ProductCardProps) {
   const cartQty = cartItem?.quantity ?? 0
   const maxReached = cartQty >= activeStock
 
-  function handleAddToCart() {
+  const maxAllowedQty = Math.max(0, activeStock - cartQty)
+
+  function handleOpenModal() {
     if (isUnavailable || maxReached) return
+    setModalQty(1)
+    setShowQtyModal(true)
+  }
+
+  const handleCloseModal = useCallback(() => {
+    setShowQtyModal(false)
+  }, [])
+
+  // Fecha com ESC
+  useEffect(() => {
+    if (!showQtyModal) return
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') handleCloseModal()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [showQtyModal, handleCloseModal])
+
+  function handleConfirmQty() {
+    if (modalQty < 1 || modalQty > maxAllowedQty) return
 
     addItem({
       productId: cartKey,
@@ -45,12 +75,15 @@ export function ProductCard({ product }: ProductCardProps) {
       color: product.color,
       size: activeSize,
       price: activePrice,
+      ...(activeWholesalePrice != null && { wholesalePrice: activeWholesalePrice }),
+      ...(activeWholesaleMinQty != null && { wholesaleMinQty: activeWholesaleMinQty }),
       imageUrl: product.imageUrl,
-      quantity: 1,
+      quantity: modalQty,
     })
 
+    setShowQtyModal(false)
     setAdded(true)
-    setTimeout(() => setAdded(false), 1500)
+    setTimeout(() => setAdded(false), 1800)
   }
 
   return (
@@ -143,11 +176,16 @@ export function ProductCard({ product }: ProductCardProps) {
                 {activeStock} disponíve{activeStock === 1 ? 'l' : 'is'}
               </span>
             )}
+            {activeWholesalePrice != null && activeWholesalePrice > 0 && activeWholesaleMinQty != null && (
+              <span className="product-card__wholesale">
+                A partir de {activeWholesaleMinQty} un.: {formatCurrency(activeWholesalePrice)}
+              </span>
+            )}
           </div>
 
           <button
             id={`btn-add-cart-${product.id}-${activeSize}`}
-            onClick={handleAddToCart}
+            onClick={handleOpenModal}
             disabled={isUnavailable || maxReached}
             className={`btn product-card__add-btn ${added ? 'product-card__add-btn--added' : ''}`}
             aria-label={
@@ -181,6 +219,90 @@ export function ProductCard({ product }: ProductCardProps) {
               </>
             )}
           </button>
+
+          {/* ── Modal de Quantidade ── */}
+          {showQtyModal && (
+            <div
+              className="qty-modal-overlay"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Selecionar quantidade"
+              onClick={(e) => { if (e.target === e.currentTarget) handleCloseModal() }}
+            >
+              <div className="qty-modal">
+                <button
+                  className="qty-modal__close"
+                  onClick={handleCloseModal}
+                  aria-label="Fechar"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+
+                <div className="qty-modal__header">
+                  {product.imageUrl && !imgError && (
+                    <img src={product.imageUrl} alt={product.name} className="qty-modal__thumb" />
+                  )}
+                  <div>
+                    <p className="qty-modal__name">{product.name}</p>
+                    <p className="qty-modal__info">
+                      {product.color}
+                      {activeSize ? ` · ${activeSize}` : ''}
+                    </p>
+                    <p className="qty-modal__price">{formatCurrency(activePrice)}</p>
+                  </div>
+                </div>
+
+                <div className="qty-modal__body">
+                  <p className="qty-modal__label">Quantidade</p>
+                  <div className="qty-modal__controls">
+                    <button
+                      className="qty-modal__btn"
+                      onClick={() => setModalQty((q) => Math.max(1, q - 1))}
+                      disabled={modalQty <= 1}
+                      aria-label="Diminuir quantidade"
+                    >−</button>
+                    <input
+                      id={`qty-input-${product.id}-${activeSize}`}
+                      type="number"
+                      className="qty-modal__input"
+                      value={modalQty}
+                      min={1}
+                      max={maxAllowedQty}
+                      onChange={(e) => {
+                        const v = parseInt(e.target.value, 10)
+                        if (!isNaN(v)) setModalQty(Math.min(maxAllowedQty, Math.max(1, v)))
+                      }}
+                      aria-label="Quantidade"
+                    />
+                    <button
+                      className="qty-modal__btn"
+                      onClick={() => setModalQty((q) => Math.min(maxAllowedQty, q + 1))}
+                      disabled={modalQty >= maxAllowedQty}
+                      aria-label="Aumentar quantidade"
+                    >+</button>
+                  </div>
+                  <p className="qty-modal__stock-info">
+                    {maxAllowedQty} disponíve{maxAllowedQty === 1 ? 'l' : 'is'}
+                    {cartQty > 0 ? ` · ${cartQty} já no carrinho` : ''}
+                  </p>
+                </div>
+
+                <button
+                  className="qty-modal__confirm"
+                  onClick={handleConfirmQty}
+                  disabled={modalQty < 1 || modalQty > maxAllowedQty}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.99-1.61L23 6H6"/>
+                  </svg>
+                  Adicionar {modalQty} ao carrinho
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {cartQty > 0 && (
