@@ -53,11 +53,24 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
   const [priceInput, setPriceInput] = useState(
     product ? centavosToDecimalString(product.price) : ''
   )
+  const [wholesalePriceInput, setWholesalePriceInput] = useState(
+    product?.wholesalePrice ? centavosToDecimalString(product.wholesalePrice) : ''
+  )
 
   // State para inputs temporários de nova variante
   const [newVariantSize, setNewVariantSize] = useState('')
   const [newVariantPriceInput, setNewVariantPriceInput] = useState('')
   const [newVariantStock, setNewVariantStock] = useState('')
+  const [newVariantWholesalePriceInput, setNewVariantWholesalePriceInput] = useState('')
+  const [newVariantWholesaleMinQty, setNewVariantWholesaleMinQty] = useState('')
+
+  // State para inputs controlados das variantes existentes (preço e atacado como string)
+  const [variantPriceInputs, setVariantPriceInputs] = useState<string[]>(
+    () => (product?.variants ?? []).map((v) => centavosToDecimalString(v.price))
+  )
+  const [variantWholesalePriceInputs, setVariantWholesalePriceInputs] = useState<string[]>(
+    () => (product?.variants ?? []).map((v) => v.wholesalePrice ? centavosToDecimalString(v.wholesalePrice) : '')
+  )
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSaving, setIsSaving] = useState(false)
@@ -79,16 +92,34 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
     const size = newVariantSize.trim()
     const price = parseCurrencyToCentavos(newVariantPriceInput)
     const stock = Math.max(0, parseInt(newVariantStock) || 0)
+    const wholesalePrice = newVariantWholesalePriceInput
+      ? parseCurrencyToCentavos(newVariantWholesalePriceInput)
+      : undefined
+    const wholesaleMinQty = newVariantWholesaleMinQty
+      ? Math.max(1, parseInt(newVariantWholesaleMinQty) || 1)
+      : undefined
 
     if (!size) return
     if (price <= 0) return
     if (form.variants.some(v => v.size.toLowerCase() === size.toLowerCase())) return
 
-    const newVariant: SizeVariant = { size, price, stock }
+    const newVariant: SizeVariant = {
+      size, price, stock,
+      ...(wholesalePrice != null && wholesalePrice > 0 && { wholesalePrice }),
+      ...(wholesaleMinQty != null && { wholesaleMinQty }),
+    }
     setField('variants', [...form.variants, newVariant])
+    // Sincroniza os arrays de inputs com a nova variante adicionada
+    setVariantPriceInputs((prev) => [...prev, centavosToDecimalString(price)])
+    setVariantWholesalePriceInputs((prev) => [
+      ...prev,
+      wholesalePrice != null && wholesalePrice > 0 ? centavosToDecimalString(wholesalePrice) : '',
+    ])
     setNewVariantSize('')
     setNewVariantPriceInput('')
     setNewVariantStock('')
+    setNewVariantWholesalePriceInput('')
+    setNewVariantWholesaleMinQty('')
   }
 
   function updateVariantStock(index: number, stock: number) {
@@ -102,8 +133,26 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
     setField('variants', updated)
   }
 
+  function updateVariantWholesalePrice(index: number, priceStr: string) {
+    const wholesalePrice = priceStr ? parseCurrencyToCentavos(priceStr) : undefined
+    const updated = form.variants.map((v, i) =>
+      i === index ? { ...v, ...(wholesalePrice != null && wholesalePrice > 0 ? { wholesalePrice } : { wholesalePrice: undefined }) } : v
+    )
+    setField('variants', updated)
+  }
+
+  function updateVariantWholesaleMinQty(index: number, qtyStr: string) {
+    const wholesaleMinQty = qtyStr ? Math.max(1, parseInt(qtyStr) || 1) : undefined
+    const updated = form.variants.map((v, i) =>
+      i === index ? { ...v, wholesaleMinQty } : v
+    )
+    setField('variants', updated)
+  }
+
   function removeVariant(index: number) {
     setField('variants', form.variants.filter((_, i) => i !== index))
+    setVariantPriceInputs((prev) => prev.filter((_, i) => i !== index))
+    setVariantWholesalePriceInputs((prev) => prev.filter((_, i) => i !== index))
   }
 
   function validate(): boolean {
@@ -289,21 +338,51 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
                 <div className="variants-table__header">
                   <span>Tamanho</span>
                   <span>Preço (R$)</span>
+                  <span>Atacado (R$)</span>
+                  <span>Mín. atacado</span>
                   <span>Estoque</span>
                   <span></span>
                 </div>
                 {form.variants.map((v, i) => (
-                  <div key={i} className="variants-table__row">
+                  <div key={v.size} className="variants-table__row">
                     <span className="variants-table__size">{v.size}</span>
                     <input
                       type="number"
-                      defaultValue={centavosToDecimalString(v.price)}
-                      onBlur={(e) => updateVariantPrice(i, e.target.value)}
+                      value={variantPriceInputs[i] ?? centavosToDecimalString(v.price)}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setVariantPriceInputs((prev) => { const arr = [...prev]; arr[i] = val; return arr })
+                        updateVariantPrice(i, val)
+                      }}
                       className="form-input variants-table__input"
                       min="0"
                       step="0.01"
                       placeholder="0.00"
                       id={`pf-variant-price-${i}`}
+                    />
+                    <input
+                      type="number"
+                      value={variantWholesalePriceInputs[i] ?? (v.wholesalePrice ? centavosToDecimalString(v.wholesalePrice) : '')}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setVariantWholesalePriceInputs((prev) => { const arr = [...prev]; arr[i] = val; return arr })
+                        updateVariantWholesalePrice(i, val)
+                      }}
+                      className="form-input variants-table__input"
+                      min="0"
+                      step="0.01"
+                      placeholder="opcional"
+                      id={`pf-variant-wholesale-price-${i}`}
+                    />
+                    <input
+                      type="number"
+                      defaultValue={v.wholesaleMinQty ?? ''}
+                      onBlur={(e) => updateVariantWholesaleMinQty(i, e.target.value)}
+                      className="form-input variants-table__input"
+                      min="1"
+                      step="1"
+                      placeholder="qtd"
+                      id={`pf-variant-wholesale-qty-${i}`}
                     />
                     <input
                       type="number"
@@ -356,6 +435,26 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
                   min="0"
                   step="0.01"
                   id="pf-new-variant-price"
+                />
+                <input
+                  type="number"
+                  value={newVariantWholesalePriceInput}
+                  onChange={(e) => setNewVariantWholesalePriceInput(e.target.value)}
+                  className="form-input"
+                  placeholder="Atacado (R$)"
+                  min="0"
+                  step="0.01"
+                  id="pf-new-variant-wholesale-price"
+                />
+                <input
+                  type="number"
+                  value={newVariantWholesaleMinQty}
+                  onChange={(e) => setNewVariantWholesaleMinQty(e.target.value)}
+                  className="form-input"
+                  placeholder="Mín. un."
+                  min="1"
+                  step="1"
+                  id="pf-new-variant-wholesale-qty"
                 />
                 <input
                   type="number"
@@ -447,6 +546,48 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
                   />
                   {errors.stock && <span className="form-error">{errors.stock}</span>}
                   <span className="form-hint">Quantidade disponível</span>
+                </div>
+              </div>
+
+              {/* Atacado */}
+              <div className="product-form__wholesale-section">
+                <h4 className="product-form__wholesale-title">Preço de atacado <span className="form-hint" style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(opcional)</span></h4>
+                <div className="product-form__row">
+                  <div className="form-group">
+                    <label htmlFor="pf-wholesale-price" className="form-label">Preço de atacado (R$)</label>
+                    <input
+                      id="pf-wholesale-price"
+                      type="number"
+                      value={wholesalePriceInput}
+                      onChange={(e) => {
+                        setWholesalePriceInput(e.target.value)
+                        const centavos = parseCurrencyToCentavos(e.target.value)
+                        setField('wholesalePrice', centavos > 0 ? centavos : undefined)
+                      }}
+                      className="form-input"
+                      placeholder="Ex: 10.00"
+                      min="0"
+                      step="0.01"
+                    />
+                    <span className="form-hint">Preço por unidade no atacado</span>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="pf-wholesale-min-qty" className="form-label">Quantidade mínima</label>
+                    <input
+                      id="pf-wholesale-min-qty"
+                      type="number"
+                      value={form.wholesaleMinQty ?? ''}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value)
+                        setField('wholesaleMinQty', val >= 1 ? val : undefined)
+                      }}
+                      className="form-input"
+                      placeholder="Ex: 5"
+                      min="1"
+                      step="1"
+                    />
+                    <span className="form-hint">A partir de quantas peças o desconto é aplicado</span>
+                  </div>
                 </div>
               </div>
             </>
@@ -586,6 +727,11 @@ export function ProductForm({ product, onSaved, onCancel }: ProductFormProps) {
                 <div key={i} className="variants-summary__row">
                   <span className="variants-summary__size">{v.size}</span>
                   <span className="variants-summary__price">{formatCurrency(v.price)}</span>
+                  {v.wholesalePrice != null && v.wholesaleMinQty != null && (
+                    <span className="variants-summary__wholesale">
+                      Atacado: {formatCurrency(v.wholesalePrice)} / {v.wholesaleMinQty}+ un.
+                    </span>
+                  )}
                   <span className="variants-summary__stock">{v.stock} un.</span>
                 </div>
               ))}

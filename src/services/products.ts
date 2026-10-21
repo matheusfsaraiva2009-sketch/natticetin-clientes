@@ -22,6 +22,16 @@ const PRODUCTS_COLLECTION = 'products'
  * Converte documento Firestore para objeto Product tipado.
  */
 function docToProduct(id: string, data: Record<string, unknown>): Product {
+  // Normaliza variantes, incluindo campos de atacado se presentes
+  const rawVariants = (data.variants as Array<Record<string, unknown>>) || []
+  const variants: SizeVariant[] = rawVariants.map((v) => ({
+    size: (v.size as string) || '',
+    price: (v.price as number) || 0,
+    stock: (v.stock as number) || 0,
+    ...(v.wholesalePrice !== undefined && { wholesalePrice: v.wholesalePrice as number }),
+    ...(v.wholesaleMinQty !== undefined && { wholesaleMinQty: v.wholesaleMinQty as number }),
+  }))
+
   return {
     id,
     name: (data.name as string) || '',
@@ -31,7 +41,9 @@ function docToProduct(id: string, data: Record<string, unknown>): Product {
     size: (data.size as string) || '',
     price: (data.price as number) || 0,
     stock: (data.stock as number) || 0,
-    variants: (data.variants as SizeVariant[]) || [],
+    ...(data.wholesalePrice !== undefined && { wholesalePrice: data.wholesalePrice as number }),
+    ...(data.wholesaleMinQty !== undefined && { wholesaleMinQty: data.wholesaleMinQty as number }),
+    variants,
     imageUrl: (data.imageUrl as string) || '',
     imageUrls: (data.imageUrls as string[]) || [],
     active: (data.active as boolean) ?? true,
@@ -41,6 +53,7 @@ function docToProduct(id: string, data: Record<string, unknown>): Product {
     updatedAt: (data.updatedAt as { toDate?: () => Date })?.toDate?.() ?? new Date(),
   }
 }
+
 
 // ──────────────────────────────────────────────
 // LEITURA PÚBLICA (catálogo)
@@ -126,7 +139,7 @@ export async function getProductById(id: string): Promise<Product | null> {
  * Retorna array com status de validação de cada item.
  */
 export async function validateCartItems(
-  items: Array<{ productId: string; price: number; quantity: number }>
+  items: Array<{ productId: string; size: string; price: number; quantity: number }>
 ): Promise<
   Array<{
     productId: string
@@ -156,7 +169,12 @@ export async function validateCartItems(
         }
       }
 
-      if (product.stock === 0 || product.status === 'out_of_stock') {
+      // Verifica estoque e preço considerando variante específica
+      const variant = product.variants.find((v) => v.size === item.size)
+      const effectiveStock = variant != null ? variant.stock : product.stock
+      const effectivePrice = variant != null ? variant.price : product.price
+
+      if (effectiveStock === 0 || product.status === 'out_of_stock') {
         return {
           productId: item.productId,
           valid: false,
@@ -165,20 +183,20 @@ export async function validateCartItems(
         }
       }
 
-      if (item.quantity > product.stock) {
+      if (item.quantity > effectiveStock) {
         return {
           productId: item.productId,
           valid: false,
-          reason: `Estoque insuficiente. Disponível: ${product.stock}`,
+          reason: `Estoque insuficiente. Disponível: ${effectiveStock}`,
           currentProduct: product,
         }
       }
 
-      if (item.price !== product.price) {
+      if (item.price !== effectivePrice) {
         return {
           productId: item.productId,
           valid: false,
-          reason: `Preço atualizado para ${product.price}`,
+          reason: `Preço atualizado para ${effectivePrice}`,
           currentProduct: product,
         }
       }

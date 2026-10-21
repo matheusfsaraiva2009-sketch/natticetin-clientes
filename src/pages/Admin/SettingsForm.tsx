@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, type FormEvent, type ChangeEvent } from 'react'
 import type { StoreSettings } from '../../types'
 import { getStoreSettings, saveStoreSettings } from '../../services/settings'
-import { uploadBrandLogo, uploadHeroImage, validateImageFile } from '../../services/storage'
+import { uploadBrandLogo, uploadHeroImage, validateImageFile, deleteImageByUrl } from '../../services/storage'
 import { compressImageFile } from '../../utils/imageCompressor'
 
 interface SettingsFormProps {
@@ -27,7 +27,8 @@ export function SettingsForm({ onSaved }: SettingsFormProps) {
   const [isSaving, setIsSaving] = useState(false)
   const [logoProgress, setLogoProgress] = useState<number | null>(null)
   const [heroProgress, setHeroProgress] = useState<number | null>(null)
-  const [uploadError, setUploadError] = useState('')
+  const [logoUploadError, setLogoUploadError] = useState('')
+  const [heroUploadError, setHeroUploadError] = useState('')
   const logoInputRef = useRef<HTMLInputElement>(null)
   const heroInputRef = useRef<HTMLInputElement>(null)
 
@@ -46,18 +47,22 @@ export function SettingsForm({ onSaved }: SettingsFormProps) {
     const file = e.target.files?.[0]
     if (!file) return
     const err = validateImageFile(file)
-    if (err) { setUploadError(err); return }
-    setUploadError('')
+    if (err) { setLogoUploadError(err); return }
+    setLogoUploadError('')
     setLogoProgress(40)
     try {
       const dataUrl = await compressImageFile(file, { maxWidth: 400, maxHeight: 400, quality: 0.85 })
       setField('logoUrl', dataUrl)
     } catch {
       try {
+        // Exclui a logo antiga do Storage (pode ter extensao diferente) antes de enviar a nova
+        if (form.logoUrl && form.logoUrl.startsWith('http')) {
+          await deleteImageByUrl(form.logoUrl).catch(() => { /* ignora se não existir */ })
+        }
         const url = await uploadBrandLogo(file, (p) => setLogoProgress(p))
         setField('logoUrl', url)
       } catch (error: unknown) {
-        setUploadError((error as Error).message)
+        setLogoUploadError((error as Error).message)
       }
     } finally {
       setLogoProgress(null)
@@ -69,18 +74,22 @@ export function SettingsForm({ onSaved }: SettingsFormProps) {
     const file = e.target.files?.[0]
     if (!file) return
     const err = validateImageFile(file)
-    if (err) { setUploadError(err); return }
-    setUploadError('')
+    if (err) { setHeroUploadError(err); return }
+    setHeroUploadError('')
     setHeroProgress(40)
     try {
       const dataUrl = await compressImageFile(file, { maxWidth: 1200, maxHeight: 800, quality: 0.82 })
       setField('heroImageUrl', dataUrl)
     } catch {
       try {
+        // Exclui a imagem hero antiga do Storage antes de enviar a nova
+        if (form.heroImageUrl && form.heroImageUrl.startsWith('http')) {
+          await deleteImageByUrl(form.heroImageUrl).catch(() => { /* ignora se não existir */ })
+        }
         const url = await uploadHeroImage(file, (p) => setHeroProgress(p))
         setField('heroImageUrl', url)
       } catch (error: unknown) {
-        setUploadError((error as Error).message)
+        setHeroUploadError((error as Error).message)
       }
     } finally {
       setHeroProgress(null)
@@ -107,9 +116,14 @@ export function SettingsForm({ onSaved }: SettingsFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="settings-form animate-fade-in" noValidate>
-      {uploadError && (
+      {logoUploadError && (
         <div className="alert alert-error" style={{ marginBottom: 'var(--space-6)' }}>
-          {uploadError}
+          Logo: {logoUploadError}
+        </div>
+      )}
+      {heroUploadError && (
+        <div className="alert alert-error" style={{ marginBottom: 'var(--space-6)' }}>
+          Hero: {heroUploadError}
         </div>
       )}
 

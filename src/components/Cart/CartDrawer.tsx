@@ -32,6 +32,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       const results = await validateCartItems(
         items.map((i) => ({
           productId: i.productId,
+          size: i.size,
           price: i.price,
           quantity: i.quantity,
         }))
@@ -104,7 +105,8 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           price: getEffectivePrice(i),
           quantity: i.quantity,
         })),
-        orderId
+        orderId,
+        settings.brandName || undefined
       )
 
       openWhatsapp(settings.whatsappNumber, message)
@@ -230,10 +232,10 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <ul className="cart-drawer__items" aria-label="Itens no carrinho">
                 {items.map((item) => (
                   <CartItemRow
-                    key={item.productId}
+                    key={`${item.productId}__${item.size}`}
                     item={item}
-                    onRemove={() => removeItem(item.productId)}
-                    onUpdateQty={(qty) => updateQuantity(item.productId, qty)}
+                    onRemove={() => removeItem(item.productId, item.size)}
+                    onUpdateQty={(qty) => updateQuantity(item.productId, qty, item.size)}
                   />
                 ))}
               </ul>
@@ -249,19 +251,21 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </div>
 
               <div className="cart-drawer__review-items">
-                {items.map((item) => {
+              {items.map((item) => {
                   const effPrice = getEffectivePrice(item)
                   const isWholesale = effPrice !== item.price
                   return (
                     <div key={item.productId} className="cart-drawer__review-item">
-                      <img
-                        src={item.imageUrl}
-                        alt={item.name}
-                        className="cart-drawer__review-img"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none'
-                        }}
-                      />
+                      {item.imageUrl && (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="cart-drawer__review-img"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none'
+                          }}
+                        />
+                      )}
                       <div className="cart-drawer__review-info">
                         <strong>{item.name}</strong>
                         <span>{item.color} · {item.size}</span>
@@ -355,6 +359,15 @@ interface CartItemRowProps {
 function CartItemRow({ item, onRemove, onUpdateQty }: CartItemRowProps) {
   const [imgError, setImgError] = useState(false)
 
+  // Calcula preço efetivo considerando desconto de atacado
+  const effectivePrice =
+    item.wholesalePrice != null &&
+    item.wholesaleMinQty != null &&
+    item.quantity >= item.wholesaleMinQty
+      ? item.wholesalePrice
+      : item.price
+  const isWholesale = effectivePrice !== item.price
+
   return (
     <li className="cart-item">
       {/* Imagem */}
@@ -375,7 +388,12 @@ function CartItemRow({ item, onRemove, onUpdateQty }: CartItemRowProps) {
         <div className="cart-item__meta">
           {item.color} · {item.size}
         </div>
-        <div className="cart-item__price">{formatCurrency(item.price)}/un</div>
+        <div className="cart-item__price">
+          {formatCurrency(effectivePrice)}/un
+          {isWholesale && (
+            <span className="cart-drawer__wholesale-badge">Atacado</span>
+          )}
+        </div>
 
         {/* Controles de quantidade */}
         <div className="cart-item__qty-controls">
@@ -408,7 +426,7 @@ function CartItemRow({ item, onRemove, onUpdateQty }: CartItemRowProps) {
       {/* Subtotal e remover */}
       <div className="cart-item__right">
         <span className="cart-item__subtotal">
-          {formatCurrency(item.price * item.quantity)}
+          {formatCurrency(effectivePrice * item.quantity)}
         </span>
         <button
           onClick={onRemove}

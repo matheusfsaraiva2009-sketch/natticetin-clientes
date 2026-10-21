@@ -489,3 +489,18 @@
   }
 }
 
+
+/* Badge 'Atacado' na tela de revisao */
+.cart-drawer__wholesale-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 20px;
+  background: rgba(121, 92, 73, 0.12);
+  color: var(--color-mocha, #795c49);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}

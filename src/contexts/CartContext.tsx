@@ -15,8 +15,8 @@ interface CartContextValue {
   totalItems: number
   totalPrice: number // in centavos
   addItem: (item: CartItem) => void
-  removeItem: (productId: string) => void
-  updateQuantity: (productId: string, quantity: number) => void
+  removeItem: (productId: string, size?: string) => void
+  updateQuantity: (productId: string, quantity: number, size?: string) => void
   clearCart: () => void
   updateItemsFromValidation: (updatedItems: CartItem[]) => void
 }
@@ -59,17 +59,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items])
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-  const totalPrice = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  )
+  const totalPrice = items.reduce((sum, item) => {
+    // Aplica preço de atacado quando a quantidade mínima for atingida
+    const effectivePrice =
+      item.wholesalePrice != null &&
+      item.wholesaleMinQty != null &&
+      item.quantity >= item.wholesaleMinQty
+        ? item.wholesalePrice
+        : item.price
+    return sum + effectivePrice * item.quantity
+  }, 0)
+
+  // Chave única para identificar um item: combina productId + size (para variantes)
+  function itemKey(productId: string, size: string) {
+    return `${productId}__${size}`
+  }
 
   const addItem = useCallback((newItem: CartItem) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.productId === newItem.productId)
+      const key = itemKey(newItem.productId, newItem.size)
+      const existing = prev.find((i) => itemKey(i.productId, i.size) === key)
       if (existing) {
         return prev.map((i) =>
-          i.productId === newItem.productId
+          itemKey(i.productId, i.size) === key
             ? { ...i, quantity: i.quantity + newItem.quantity }
             : i
         )
@@ -78,19 +90,38 @@ export function CartProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((i) => i.productId !== productId))
+  const removeItem = useCallback((productId: string, size?: string) => {
+    setItems((prev) =>
+      prev.filter((i) => {
+        if (size !== undefined) {
+          return itemKey(i.productId, i.size) !== itemKey(productId, size)
+        }
+        // Fallback: remove todos os itens com esse productId (compatibilidade)
+        return i.productId !== productId
+      })
+    )
   }, [])
 
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
+  const updateQuantity = useCallback((productId: string, quantity: number, size?: string) => {
     if (quantity <= 0) {
-      setItems((prev) => prev.filter((i) => i.productId !== productId))
+      setItems((prev) =>
+        prev.filter((i) => {
+          if (size !== undefined) {
+            return itemKey(i.productId, i.size) !== itemKey(productId, size)
+          }
+          return i.productId !== productId
+        })
+      )
       return
     }
     setItems((prev) =>
-      prev.map((i) =>
-        i.productId === productId ? { ...i, quantity } : i
-      )
+      prev.map((i) => {
+        const matches =
+          size !== undefined
+            ? itemKey(i.productId, i.size) === itemKey(productId, size)
+            : i.productId === productId
+        return matches ? { ...i, quantity } : i
+      })
     )
   }, [])
 

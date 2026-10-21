@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
 import { SettingsProvider } from './contexts/SettingsContext'
@@ -22,7 +22,7 @@ function PublicLayout() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header onCartOpen={() => setIsCartOpen(true)} />
       <div style={{ paddingTop: 'var(--header-height)', flex: 1 }}>
-        <HomePage />
+        <Outlet />
       </div>
       <Footer />
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
@@ -38,8 +38,11 @@ export default function App() {
         <SettingsProvider>
           <CartProvider>
             <Routes>
-              {/* Catálogo público */}
-              <Route path="/" element={<PublicLayout />} />
+              {/* Layout público */}
+              <Route element={<PublicLayout />}>
+                {/* Catálogo público */}
+                <Route index element={<HomePage />} />
+              </Route>
 
               {/* Login da proprietária */}
               <Route path="/login" element={<LoginPage />} />

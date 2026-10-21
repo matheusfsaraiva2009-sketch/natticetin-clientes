@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useAllProducts } from '../../hooks/useProducts'
 import { signOutUser } from '../../services/auth'
 import { deleteProduct } from '../../services/products'
+import { deleteProductImages } from '../../services/storage'
 import { subscribeToOrders } from '../../services/orders'
 import { formatCurrency } from '../../utils'
 import type { Product, Order } from '../../types'
@@ -57,9 +58,10 @@ export function AdminPage() {
   }
 
   function handleProductSaved() {
+    const wasEditing = !!editingProduct
     setEditingProduct(null)
     setActiveTab('products')
-    showSuccess(editingProduct ? 'Produto atualizado com sucesso!' : 'Produto cadastrado com sucesso!')
+    showSuccess(wasEditing ? 'Produto atualizado com sucesso!' : 'Produto cadastrado com sucesso!')
   }
 
   function handleCancelForm() {
@@ -72,6 +74,14 @@ export function AdminPage() {
     setDeletingId(deleteConfirm.id)
 
     try {
+      // Exclui imagens do Storage antes de remover o documento
+      const imageUrls = [
+        ...(deleteConfirm.imageUrl ? [deleteConfirm.imageUrl] : []),
+        ...(deleteConfirm.imageUrls ?? []),
+      ].filter((url) => url.startsWith('http'))
+      if (imageUrls.length > 0) {
+        await deleteProductImages(imageUrls)
+      }
       await deleteProduct(deleteConfirm.id)
       showSuccess('Produto excluído.')
     } catch {

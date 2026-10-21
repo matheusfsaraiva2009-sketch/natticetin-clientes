@@ -236,6 +236,7 @@ export async function rejectOrder(orderId: string, notes?: string): Promise<void
     status: 'rejected',
     rejectedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    ...(notes ? { notes } : {}),
+    // Grava sempre (inclusive string vazia) para permitir limpar notas antigas
+    notes: notes ?? '',
   })
 }

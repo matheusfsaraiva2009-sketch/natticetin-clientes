@@ -48,7 +48,7 @@ export interface WhatsappOrderItem {
   quantity: number
 }
 
-export function generateWhatsappMessage(items: WhatsappOrderItem[], orderId?: string): string {
+export function generateWhatsappMessage(items: WhatsappOrderItem[], orderId?: string, storeName?: string): string {
   if (items.length === 0) return ''
 
   let total = 0
@@ -67,8 +67,12 @@ export function generateWhatsappMessage(items: WhatsappOrderItem[], orderId?: st
     return `• ${parts.join(' | ')}`
   })
 
+  const greeting = storeName
+    ? `Olá! Segue meu pedido de ${storeName}:`
+    : 'Olá! Segue meu pedido:'
+
   const lines = [
-    'Olá! Segue meu pedido da Nati Cetim:',
+    greeting,
     '',
     itemLines.join('\n'),
     '',
