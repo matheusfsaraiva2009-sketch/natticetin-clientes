@@ -178,7 +178,7 @@ export function ProductCard({ product }: ProductCardProps) {
             )}
             {activeWholesalePrice != null && activeWholesalePrice > 0 && activeWholesaleMinQty != null && (
               <span className="product-card__wholesale">
-                A partir de {activeWholesaleMinQty} un.: {formatCurrency(activeWholesalePrice)}
+                A partir de {activeWholesaleMinQty} uni : {formatCurrency(activeWholesalePrice)}
               </span>
             )}
           </div>
