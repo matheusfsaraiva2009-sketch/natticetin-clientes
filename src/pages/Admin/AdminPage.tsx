@@ -26,6 +26,7 @@ export function AdminPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<Product | null>(null)
   const [successMessage, setSuccessMessage] = useState('')
   const [pendingOrdersCount, setPendingOrdersCount] = useState(0)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Observa contagem de pedidos pendentes
   useEffect(() => {
@@ -55,6 +56,12 @@ export function AdminPage() {
   function handleEditProduct(product: Product) {
     setEditingProduct(product)
     setActiveTab('add')
+  }
+
+  function navigateTo(tab: AdminTab) {
+    if (tab === 'products' || tab === 'add') setEditingProduct(null)
+    setActiveTab(tab)
+    setMobileMenuOpen(false)
   }
 
   function handleProductSaved() {
@@ -100,9 +107,148 @@ export function AdminPage() {
     return <span className="badge badge-active">Ativo</span>
   }
 
+  // Labels das abas
+  const tabLabel: Record<AdminTab, string> = {
+    dashboard: 'Dashboard',
+    products: 'Produtos',
+    orders: 'Pedidos',
+    add: editingProduct ? 'Editar produto' : 'Novo produto',
+    settings: 'Configurações',
+  }
+
+  // Itens de navegação reutilizados na sidebar e no drawer mobile
+  const navItems = (
+    <>
+      <button onClick={() => navigateTo('dashboard')} className={`admin-nav-btn ${activeTab === 'dashboard' ? 'is-active' : ''}`} id="btn-admin-dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        Dashboard
+      </button>
+
+      <button onClick={() => navigateTo('products')} className={`admin-nav-btn ${activeTab === 'products' ? 'is-active' : ''}`} id="btn-admin-products">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+        </svg>
+        Produtos
+      </button>
+
+      <button onClick={() => navigateTo('add')} className={`admin-nav-btn ${activeTab === 'add' && !editingProduct ? 'is-active' : ''}`} id="btn-admin-add">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Novo produto
+      </button>
+
+      <button onClick={() => navigateTo('orders')} className={`admin-nav-btn ${activeTab === 'orders' ? 'is-active' : ''}`} id="btn-admin-orders" style={{ position: 'relative' }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+          <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+        </svg>
+        Pedidos
+        {pendingOrdersCount > 0 && (
+          <span className="admin-nav-badge">{pendingOrdersCount}</span>
+        )}
+      </button>
+
+      <button onClick={() => navigateTo('settings')} className={`admin-nav-btn ${activeTab === 'settings' ? 'is-active' : ''}`} id="btn-admin-settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>
+        Configurações
+      </button>
+    </>
+  )
+
   return (
     <div className="admin-page">
-      {/* Sidebar */}
+
+      {/* ── Mobile Header (hambúrguer) ── */}
+      <header className="admin-mobile-header" aria-label="Cabeçalho mobile">
+        <div className="admin-mobile-header__left">
+          <div className="admin-sidebar__logo" aria-hidden="true">V</div>
+          <span className="admin-mobile-header__title">{tabLabel[activeTab]}</span>
+        </div>
+        <div className="admin-mobile-header__right">
+          {pendingOrdersCount > 0 && activeTab !== 'orders' && (
+            <button
+              onClick={() => navigateTo('orders')}
+              className="admin-mobile-header__orders-badge"
+              aria-label={`${pendingOrdersCount} pedidos pendentes`}
+              id="btn-mobile-orders-badge"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                <rect x="9" y="3" width="6" height="4" rx="1"/>
+                <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+              </svg>
+              <span className="admin-nav-badge">{pendingOrdersCount}</span>
+            </button>
+          )}
+          <button
+            className="admin-hamburger"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Abrir menu"
+            aria-expanded={mobileMenuOpen}
+            id="btn-admin-hamburger"
+          >
+            <span className="admin-hamburger__bar" />
+            <span className="admin-hamburger__bar" />
+            <span className="admin-hamburger__bar" />
+          </button>
+        </div>
+      </header>
+
+      {/* ── Mobile Drawer ── */}
+      {mobileMenuOpen && (
+        <div
+          className="admin-mobile-backdrop"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+      <div className={`admin-mobile-drawer ${mobileMenuOpen ? 'is-open' : ''}`} aria-label="Menu administrativo mobile" role="dialog" aria-modal="true">
+        <div className="admin-mobile-drawer__header">
+          <div className="admin-sidebar__logo" aria-hidden="true">V</div>
+          <div>
+            <div className="admin-sidebar__brand">Val Acessórios</div>
+            <div className="admin-sidebar__role">Administrador</div>
+          </div>
+          <button
+            className="admin-mobile-drawer__close"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Fechar menu"
+            id="btn-admin-drawer-close"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <nav className="admin-mobile-drawer__nav">
+          {navItems}
+        </nav>
+        <div className="admin-mobile-drawer__footer">
+          <div className="admin-sidebar__user">
+            <div className="admin-sidebar__avatar" aria-hidden="true">
+              {user?.email?.charAt(0).toUpperCase()}
+            </div>
+            <div className="admin-sidebar__user-info">
+              <span className="admin-sidebar__email">{user?.email}</span>
+            </div>
+          </div>
+          <button onClick={handleSignOut} className="admin-sidebar__signout" title="Sair" id="btn-admin-signout-mobile" aria-label="Sair da conta">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Sair
+          </button>
+        </div>
+      </div>
+
+      {/* ── Sidebar (desktop only) ── */}
       <aside className="admin-sidebar" aria-label="Menu administrativo">
         <div className="admin-sidebar__header">
           <div className="admin-sidebar__logo">V</div>
@@ -111,71 +257,9 @@ export function AdminPage() {
             <div className="admin-sidebar__role">Administrador</div>
           </div>
         </div>
-
         <nav className="admin-sidebar__nav">
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`admin-nav-btn ${activeTab === 'dashboard' ? 'is-active' : ''}`}
-            id="btn-admin-dashboard"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-            </svg>
-            Dashboard
-          </button>
-
-          <button
-            onClick={() => { setEditingProduct(null); setActiveTab('products') }}
-            className={`admin-nav-btn ${activeTab === 'products' ? 'is-active' : ''}`}
-            id="btn-admin-products"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-            </svg>
-            Produtos
-          </button>
-
-          <button
-            onClick={() => { setEditingProduct(null); setActiveTab('add') }}
-            className={`admin-nav-btn ${activeTab === 'add' && !editingProduct ? 'is-active' : ''}`}
-            id="btn-admin-add"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-            Novo produto
-          </button>
-
-          <button
-            onClick={() => setActiveTab('orders')}
-            className={`admin-nav-btn ${activeTab === 'orders' ? 'is-active' : ''}`}
-            id="btn-admin-orders"
-            style={{ position: 'relative' }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
-              <rect x="9" y="3" width="6" height="4" rx="1"/>
-              <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
-            </svg>
-            Pedidos
-            {pendingOrdersCount > 0 && (
-              <span className="admin-nav-badge">{pendingOrdersCount}</span>
-            )}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`admin-nav-btn ${activeTab === 'settings' ? 'is-active' : ''}`}
-            id="btn-admin-settings"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
-            </svg>
-            Configurações
-          </button>
+          {navItems}
         </nav>
-
         <div className="admin-sidebar__footer">
           <div className="admin-sidebar__user">
             <div className="admin-sidebar__avatar" aria-hidden="true">
@@ -185,13 +269,7 @@ export function AdminPage() {
               <span className="admin-sidebar__email">{user?.email}</span>
             </div>
           </div>
-          <button
-            onClick={handleSignOut}
-            className="admin-sidebar__signout"
-            title="Sair"
-            id="btn-admin-signout"
-            aria-label="Sair da conta"
-          >
+          <button onClick={handleSignOut} className="admin-sidebar__signout" title="Sair" id="btn-admin-signout" aria-label="Sair da conta">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
@@ -201,14 +279,10 @@ export function AdminPage() {
 
       {/* Main content */}
       <main className="admin-main">
-        {/* Topbar */}
+        {/* Topbar (desktop) */}
         <div className="admin-topbar">
           <h1 className="admin-topbar__title">
-            {activeTab === 'dashboard' && 'Dashboard'}
-            {activeTab === 'products' && 'Produtos'}
-            {activeTab === 'orders' && 'Pedidos'}
-            {activeTab === 'add' && (editingProduct ? 'Editar produto' : 'Novo produto')}
-            {activeTab === 'settings' && 'Configurações da marca'}
+            {tabLabel[activeTab]}
           </h1>
           {successMessage && (
             <div className="alert alert-success admin-topbar__success" role="status">

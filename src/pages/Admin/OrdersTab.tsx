@@ -13,6 +13,7 @@ export function OrdersTab() {
   const [processingId, setProcessingId] = useState<string | null>(null)
   const [rejectModal, setRejectModal] = useState<Order | null>(null)
   const [rejectNotes, setRejectNotes] = useState('')
+  const [confirmModal, setConfirmModal] = useState<Order | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [error, setError] = useState('')
 
@@ -33,11 +34,12 @@ export function OrdersTab() {
   const filtered = orders.filter((o) => filter === 'all' || o.status === filter)
   const pendingCount = orders.filter((o) => o.status === 'pending').length
 
-  async function handleConfirm(order: Order) {
-    if (!window.confirm(`Confirmar pedido #${order.id.slice(-6).toUpperCase()}?\n\nIsso irá descontar o estoque automaticamente.`)) return
-    setProcessingId(order.id)
+  async function handleConfirmModal() {
+    if (!confirmModal) return
+    setProcessingId(confirmModal.id)
     try {
-      await confirmOrder(order.id)
+      await confirmOrder(confirmModal.id)
+      setConfirmModal(null)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Erro ao confirmar pedido.'
       alert(`Erro: ${msg}`)
@@ -190,21 +192,15 @@ export function OrdersTab() {
                     {order.status === 'pending' && (
                       <div className="order-card__actions">
                         <button
-                          onClick={() => handleConfirm(order)}
+                          onClick={() => setConfirmModal(order)}
                           disabled={processingId === order.id}
                           className="btn btn-success"
                           id={`btn-confirm-order-${order.id}`}
                         >
-                          {processingId === order.id ? (
-                            <><div className="spinner" style={{ width: 14, height: 14, borderWidth: 2, borderTopColor: 'white' }} /> Confirmando...</>
-                          ) : (
-                            <>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <polyline points="20 6 9 17 4 12"/>
-                              </svg>
-                              Confirmar e descontar estoque
-                            </>
-                          )}
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                          Confirmar e descontar estoque
                         </button>
                         <button
                           onClick={() => { setRejectModal(order); setRejectNotes('') }}
@@ -224,6 +220,48 @@ export function OrdersTab() {
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* Modal de confirmação */}
+      {confirmModal && (
+        <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+          <div className="modal">
+            <div className="modal-header">
+              <h2 id="confirm-modal-title" className="modal-title">Confirmar pedido</h2>
+              <button
+                onClick={() => setConfirmModal(null)}
+                className="cart-drawer__close"
+                aria-label="Fechar"
+                id="btn-confirm-modal-close"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>Confirmar pedido <strong>#{confirmModal.id.slice(-6).toUpperCase()}</strong>?</p>
+              <p className="form-hint" style={{ marginTop: 'var(--space-2)' }}>
+                O estoque será descontado automaticamente.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button onClick={() => setConfirmModal(null)} className="btn btn-ghost" id="btn-confirm-cancel">
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmModal}
+                disabled={processingId === confirmModal.id}
+                className="btn btn-success"
+                id="btn-confirm-submit"
+              >
+                {processingId === confirmModal.id ? (
+                  <><div className="spinner" style={{ width: 14, height: 14, borderWidth: 2, borderTopColor: 'white' }} /> Confirmando...</>
+                ) : 'Confirmar e descontar estoque'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

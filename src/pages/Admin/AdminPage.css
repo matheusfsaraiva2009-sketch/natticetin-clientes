@@ -20,49 +20,8 @@
   z-index: 30;
 }
 
-@media (max-width: 768px) {
-  .admin-sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    flex-direction: row;
-    align-items: center;
-    padding: var(--space-3) var(--space-4);
-    overflow-x: auto;
-  }
+/* mobile sidebar rules handled in the hamburger section below */
 
-  .admin-sidebar__header {
-    flex-shrink: 0;
-    margin-bottom: 0 !important;
-    margin-right: var(--space-4);
-    padding: 0 !important;
-    border-bottom: none !important;
-  }
-
-  .admin-sidebar__nav {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    overflow-x: auto;
-    padding: 0;
-    gap: var(--space-1);
-  }
-
-  .admin-sidebar__footer {
-    flex-shrink: 0;
-    padding: 0 !important;
-    border-top: none !important;
-    margin-left: var(--space-4);
-  }
-
-  .admin-sidebar__user {
-    display: none;
-  }
-
-  .admin-main {
-    margin-left: 0 !important;
-  }
-}
 
 .admin-sidebar__header {
   display: flex;
@@ -686,93 +645,258 @@
 
 
 /* ═══════════════════════════════════════════════
-   MELHORIAS MOBILE — Admin (completo)
+   MOBILE — Menu Hambúrguer + Drawer
    ═══════════════════════════════════════════════ */
 
-/* ── Sidebar em mobile: barra horizontal no topo ── */
 @media (max-width: 768px) {
+  /* Layout em coluna: header mobile em cima, conteúdo embaixo */
   .admin-page {
     flex-direction: column;
   }
 
+  /* Esconde a sidebar tradicional no mobile */
   .admin-sidebar {
-    width: 100%;
-    height: auto;
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    flex-direction: row;
-    align-items: center;
-    padding: var(--space-2) var(--space-3);
-    overflow-x: auto;
-    gap: var(--space-2);
-    /* Oculta scrollbar horizontal mas mantém funcionalidade */
-    scrollbar-width: none;
-  }
-
-  .admin-sidebar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .admin-sidebar__header {
-    flex-shrink: 0;
-    margin-bottom: 0 !important;
-    padding: 0 !important;
-    border-bottom: none !important;
-    margin-right: var(--space-2);
-  }
-
-  /* Oculta texto do brand na sidebar horizontal */
-  .admin-sidebar__brand,
-  .admin-sidebar__role {
-    display: none;
-  }
-
-  .admin-sidebar__nav {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    gap: var(--space-1);
-    padding: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .admin-sidebar__nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Botões de nav: compactos e tocáveis */
-  .admin-nav-btn {
-    flex-shrink: 0;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-full);
-    font-size: var(--text-xs);
-    min-height: 40px;
-    gap: var(--space-2);
-    white-space: nowrap;
-  }
-
-  .admin-sidebar__footer {
-    flex-shrink: 0;
-    padding: 0 !important;
-    border-top: none !important;
-    margin-left: auto;
-  }
-
-  .admin-sidebar__user {
-    display: none;
-  }
-
-  /* Botão de sair: maior para toque */
-  .admin-sidebar__signout {
-    width: 40px;
-    height: 40px;
+    display: none !important;
   }
 
   .admin-main {
     margin-left: 0 !important;
     min-height: 0;
+  }
+
+  /* Topbar do desktop some no mobile (o header mobile substitui) */
+  .admin-topbar {
+    display: none;
+  }
+}
+
+/* ── Mobile Header ── */
+.admin-mobile-header {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-espresso);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    gap: var(--space-3);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .admin-mobile-header__left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .admin-mobile-header__title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    color: var(--color-creme);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .admin-mobile-header__right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  /* Botão de pedidos pendentes no header */
+  .admin-mobile-header__orders-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-creme);
+    padding: var(--space-2);
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+    position: relative;
+  }
+
+  .admin-mobile-header__orders-badge:hover {
+    background: rgba(242,233,220,0.1);
+  }
+}
+
+/* ── Botão Hambúrguer ── */
+.admin-hamburger {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: rgba(242,233,220,0.1);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    padding: var(--space-2);
+    transition: background var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  .admin-hamburger:hover {
+    background: rgba(242,233,220,0.2);
+  }
+
+  .admin-hamburger__bar {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--color-creme);
+    border-radius: 2px;
+    transition: transform var(--transition-base), opacity var(--transition-base);
+  }
+}
+
+/* ── Backdrop ── */
+.admin-mobile-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 49;
+    backdrop-filter: blur(2px);
+    animation: fade-in-backdrop 0.2s ease;
+  }
+}
+
+@keyframes fade-in-backdrop {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Drawer lateral ── */
+.admin-mobile-drawer {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-mobile-drawer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    background: var(--color-espresso);
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.25);
+    overflow-y: auto;
+  }
+
+  .admin-mobile-drawer.is-open {
+    transform: translateX(0);
+  }
+
+  /* Header do drawer */
+  .admin-mobile-drawer__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    border-bottom: 1px solid rgba(242,233,220,0.1);
+    flex-shrink: 0;
+  }
+
+  .admin-mobile-drawer__close {
+    margin-left: auto;
+    width: 36px;
+    height: 36px;
+    background: rgba(242,233,220,0.08);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(242,233,220,0.7);
+    flex-shrink: 0;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .admin-mobile-drawer__close:hover {
+    background: rgba(192,87,79,0.2);
+    color: #f08080;
+  }
+
+  /* Nav do drawer: itens em coluna full-width */
+  .admin-mobile-drawer__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-4) var(--space-3);
+    flex: 1;
+  }
+
+  .admin-mobile-drawer__nav .admin-nav-btn {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    min-height: 48px;
+    gap: var(--space-3);
+    white-space: nowrap;
+  }
+
+  /* Footer do drawer */
+  .admin-mobile-drawer__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid rgba(242,233,220,0.1);
+    flex-shrink: 0;
+  }
+
+  .admin-mobile-drawer__footer .admin-sidebar__user {
+    display: flex !important;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .admin-mobile-drawer__footer .admin-sidebar__signout {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: auto;
+    height: auto;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: rgba(242,233,220,0.6);
+  }
+
+  .admin-mobile-drawer__footer .admin-sidebar__signout:hover {
+    background: rgba(192,87,79,0.2);
+    color: #f08080;
   }
 }
 

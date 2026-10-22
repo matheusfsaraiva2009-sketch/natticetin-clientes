@@ -51,6 +51,9 @@ export interface WhatsappOrderItem {
 export function generateWhatsappMessage(items: WhatsappOrderItem[], orderId?: string, storeName?: string): string {
   if (items.length === 0) return ''
 
+  // orderId mantido na assinatura para compatibilidade, mas não exibido na mensagem
+  void orderId
+
   let total = 0
   const itemLines = items.map((item) => {
     const subtotal = item.price * item.quantity
@@ -77,18 +80,13 @@ export function generateWhatsappMessage(items: WhatsappOrderItem[], orderId?: st
     itemLines.join('\n'),
     '',
     `Total: ${formatCurrency(total)}`,
+    '',
+    'Aguardo a confirmação.',
   ]
-
-  if (orderId) {
-    lines.push('')
-    lines.push(`Nº do pedido: ${orderId}`)
-  }
-
-  lines.push('')
-  lines.push('Aguardo a confirmação.')
 
   return lines.join('\n')
 }
+
 
 
 /**
